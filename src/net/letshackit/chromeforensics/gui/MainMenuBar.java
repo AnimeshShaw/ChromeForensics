@@ -28,6 +28,7 @@ public class MainMenuBar extends JMenuBar {
 
     private JMenuItem fileLoadData;
     private JMenuItem fileExit;
+    private JMenuItem fileAutoSearch;
     private JMenuItem exportCsv;
     private JMenuItem exportHtml;
     private JMenuItem helpGetHelp;
@@ -40,9 +41,12 @@ public class MainMenuBar extends JMenuBar {
     private JMenuItem filterSearchEngines;
     private JMenuItem executeQuery;
     private JMenuItem dataBrowser;
+    private JMenuItem clearQuery;
 
     private JSeparator fileSep;
-    private JSeparator toolsSep, toolsSep2;
+    private JSeparator toolsSep, toolsSep2, toolsSep3;
+    private JSeparator exportSep;
+    private JSeparator helpSep;
 
     public MainMenuBar() {
         //setHelpMenu(help);
@@ -59,8 +63,10 @@ public class MainMenuBar extends JMenuBar {
 
         fileSep = new JSeparator();
         fileSep.setOrientation(JSeparator.HORIZONTAL);
-        fileLoadData = new JMenuItem("Load Chrome Data");
+        fileLoadData = new JMenuItem("Manually Load Chrome Data");
         file.add(fileLoadData);
+        fileAutoSearch = new JMenuItem("AutoSearch Chrome Data");
+        file.add(fileAutoSearch);
         file.add(fileSep);
         fileExit = new JMenuItem("Exit");
         file.add(fileExit);
@@ -88,5 +94,37 @@ public class MainMenuBar extends JMenuBar {
         tools.add(toolsSep2);
         dataBrowser = new JMenuItem("Data Browser");
         tools.add(dataBrowser);
+        toolsSep3 = new JSeparator();
+        toolsSep3.setOrientation(JSeparator.HORIZONTAL);
+        tools.add(toolsSep3);
+        clearQuery = new JMenuItem("Clear Query");
+        tools.add(clearQuery);
+
+        exportSep = new JSeparator();
+        exportSep.setOrientation(JSeparator.HORIZONTAL);
+        exportCsv = new JMenuItem("Export As CSV");
+        export.add(exportCsv);
+        export.add(exportSep);
+        exportHtml = new JMenuItem("Export As HTML");
+        export.add(exportHtml);
+
+        helpSep = new JSeparator();
+        helpSep.setOrientation(JSeparator.HORIZONTAL);
+        helpGetHelp = new JMenuItem("Get Help!");
+        help.add(helpGetHelp);
+        help.add(helpSep);
+        helpAbout = new JMenuItem("About ChromeForensics");
+        help.add(helpAbout);
+
+        fileExit.addActionListener(actionEvent -> {
+            /**
+             * Not sure if this is the correct method. If not, bite me!!!
+             *
+             * But using System.exit(0) is not cool.
+             */
+            ChromeForensicsGui.getInstance().dispose();
+            //System.exit(0);
+        });
+
     }
 }

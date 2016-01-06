@@ -16,9 +16,8 @@
 
 package net.letshackit.chromeforensics.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
 
 public class MainPanel extends JPanel {
@@ -28,7 +27,12 @@ public class MainPanel extends JPanel {
 
     private JToolBar toolBar;
 
+    private JButton autoLoadData;
+    private JButton manuallyLoadData;
 
+    private JPanel visits;
+
+    private JTabbedPane tabbedPane;
 
     /**
      * MainPanel constructor to initialize the components.
@@ -39,7 +43,8 @@ public class MainPanel extends JPanel {
     public MainPanel(int WIDTH, int HEIGHT) {
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
-        setSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setLayout(new BorderLayout());
         initComponents();
     }
 
@@ -47,8 +52,22 @@ public class MainPanel extends JPanel {
      * Function that initializes the
      */
     private void initComponents() {
+        toolBar = new JToolBar();
+        toolBar.setOrientation(JToolBar.HORIZONTAL);
+        toolBar.setFloatable(false);
 
+        manuallyLoadData = new JButton("Manually Load");
+        toolBar.add(manuallyLoadData);
+        autoLoadData = new JButton("Auto Load");
+        toolBar.add(autoLoadData);
 
+        add(toolBar, BorderLayout.NORTH);
+
+        visits = new JPanel();
+
+        tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Visits", visits);
+        add(tabbedPane, BorderLayout.CENTER);
 
     }
 
@@ -67,5 +86,4 @@ public class MainPanel extends JPanel {
     public void setHeight(int HEIGHT) {
         this.HEIGHT = HEIGHT;
     }
-
 }

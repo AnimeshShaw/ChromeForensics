@@ -16,29 +16,31 @@
 
 package net.letshackit.chromeforensics.gui;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 
 public class ChromeForensicsGui {
 
-    private JFrame frame;
+    private static JFrame frame;
 
     private final int WIDTH = 800;
     private final int HEIGHT = 600;
 
     public ChromeForensicsGui() {
         frame = new JFrame("Chrome Forensics v1.0");
-        frame.setResizable(true);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(new Dimension(WIDTH, HEIGHT));
-        frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
-        frame.setContentPane(new MainPanel(WIDTH, HEIGHT));
+        frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        frame.setMinimumSize(new Dimension(500, 500));
+        MainPanel mPanel = new MainPanel(WIDTH, HEIGHT);
+        frame.setContentPane(mPanel);
         frame.setJMenuBar(new MainMenuBar());
         frame.setVisible(true);
         frame.pack();
+    }
+
+    public static JFrame getInstance() {
+        return frame;
     }
 
     public static void main(String[] args) {
