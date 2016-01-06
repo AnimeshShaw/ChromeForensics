@@ -15,3 +15,20 @@
  */
 
 package net.letshackit.chromeforensics.gui;
+
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Filter Panel to be added to the main GUI to filter results according to users requirements.
+ *
+ * @author Psycho_Coder
+ */
+public class FilterPanel extends JPanel {
+
+    public FilterPanel() {
+        setPreferredSize(new Dimension(getWidth(), 80));
+        setBackground(Color.BLACK);
+    }
+
+}

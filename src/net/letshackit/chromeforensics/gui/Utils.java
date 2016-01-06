@@ -15,3 +15,23 @@
  */
 
 package net.letshackit.chromeforensics.gui;
+
+import javax.swing.*;
+import java.net.URL;
+
+public final class Utils {
+
+    public Utils() {
+    }
+
+    protected static ImageIcon createImageIcon(String path, String description) {
+        URL imgURL = Utils.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, description);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
+
+}

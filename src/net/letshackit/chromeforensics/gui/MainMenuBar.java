@@ -36,7 +36,6 @@ public class MainMenuBar extends JMenuBar {
     private JMenuItem filterGoogle;
     private JMenuItem filterBing;
     private JMenuItem filterYahoo;
-    private JMenuItem filterSafesearch;
     private JMenuItem filterDuckDuckgo;
     private JMenuItem filterSearchEngines;
     private JMenuItem executeQuery;
@@ -49,12 +48,12 @@ public class MainMenuBar extends JMenuBar {
     private JSeparator helpSep;
 
     public MainMenuBar() {
-        //setHelpMenu(help);
         file = new JMenu("File");
         tools = new JMenu("Tools");
         export = new JMenu("Export");
         help = new JMenu("Help");
         filter = new JMenu("Filter by");
+        filter.setIcon(Utils.createImageIcon("images/filter_small.png", "Filter Data"));
 
         add(file);
         add(tools);
@@ -64,67 +63,88 @@ public class MainMenuBar extends JMenuBar {
         fileSep = new JSeparator();
         fileSep.setOrientation(JSeparator.HORIZONTAL);
         fileLoadData = new JMenuItem("Manually Load Chrome Data");
+        fileLoadData.setIcon(Utils.createImageIcon("images/loaddata_small.png", "Load Data"));
+        fileLoadData.setToolTipText("Manually locate the chrome data files folder.");
         file.add(fileLoadData);
         fileAutoSearch = new JMenuItem("AutoSearch Chrome Data");
+        fileAutoSearch.setIcon(Utils.createImageIcon("images/autosearch_small.png", "Auto Search andLoad Data"));
+        fileAutoSearch.setToolTipText("Automatically search and load chrome files.");
         file.add(fileAutoSearch);
         file.add(fileSep);
         fileExit = new JMenuItem("Exit");
+        fileExit.setIcon(Utils.createImageIcon("images/exit_small.png", "Exit"));
+        fileExit.setToolTipText("Exit Application.");
         file.add(fileExit);
 
         tools.add(filter);
         filterBing = new JMenuItem("Bing");
+        filterBing.setIcon(Utils.createImageIcon("images/bing_small.png", "Bing"));
         filter.add(filterBing);
         filterGoogle = new JMenuItem("Google");
+        filterGoogle.setIcon(Utils.createImageIcon("images/google_small.png", "Google"));
         filter.add(filterGoogle);
         filterYahoo = new JMenuItem("Yahoo");
+        filterYahoo.setIcon(Utils.createImageIcon("images/yahoo_small.png", "Yahoo"));
         filter.add(filterYahoo);
-        filterSafesearch = new JMenuItem("Safesearch");
-        filter.add(filterSafesearch);
         filterDuckDuckgo = new JMenuItem("DuckDuckgo");
+        filterDuckDuckgo.setIcon(Utils.createImageIcon("images/duckduckgo_small.png", "DuckDuckgo"));
         filter.add(filterDuckDuckgo);
         filterSearchEngines = new JMenuItem("Search Engines");
+        filterSearchEngines.setIcon(Utils.createImageIcon("images/searchengine_small.png", "Other Search Engines"));
         filter.add(filterSearchEngines);
         toolsSep = new JSeparator();
         toolsSep.setOrientation(JSeparator.HORIZONTAL);
         tools.add(toolsSep);
         executeQuery = new JMenuItem("Custom SQL Query");
+        executeQuery.setIcon(Utils.createImageIcon("images/sql_small.png", "Custom SQL Query."));
+        executeQuery.setToolTipText("Run Custom SQL Query.");
         tools.add(executeQuery);
         toolsSep2 = new JSeparator();
         toolsSep2.setOrientation(JSeparator.HORIZONTAL);
         tools.add(toolsSep2);
         dataBrowser = new JMenuItem("Data Browser");
+        dataBrowser.setIcon(Utils.createImageIcon("images/databrowse_small.png", "SQLite Data Browser"));
+        dataBrowser.setToolTipText("SQLite Data Browser");
         tools.add(dataBrowser);
         toolsSep3 = new JSeparator();
         toolsSep3.setOrientation(JSeparator.HORIZONTAL);
         tools.add(toolsSep3);
         clearQuery = new JMenuItem("Clear Query");
+        clearQuery.setIcon(Utils.createImageIcon("images/clear_small.png", "Clear result set."));
+        clearQuery.setToolTipText("Clear the result set.");
         tools.add(clearQuery);
 
         exportSep = new JSeparator();
         exportSep.setOrientation(JSeparator.HORIZONTAL);
         exportCsv = new JMenuItem("Export As CSV");
+        exportCsv.setIcon(Utils.createImageIcon("images/csv_small.png", "Export results to CSV"));
+        exportCsv.setToolTipText("Export Results to CSV");
         export.add(exportCsv);
         export.add(exportSep);
         exportHtml = new JMenuItem("Export As HTML");
+        exportHtml.setIcon(Utils.createImageIcon("images/html_small.png", "Export results to HTML"));
+        exportHtml.setToolTipText("Export results to HTML.");
         export.add(exportHtml);
 
         helpSep = new JSeparator();
         helpSep.setOrientation(JSeparator.HORIZONTAL);
         helpGetHelp = new JMenuItem("Get Help!");
+        helpGetHelp.setIcon(Utils.createImageIcon("images/help_small.png", "Get Help!"));
+        helpGetHelp.setToolTipText("Get help!");
         help.add(helpGetHelp);
         help.add(helpSep);
-        helpAbout = new JMenuItem("About ChromeForensics");
+        helpAbout = new JMenuItem("About ChromeForensics!");
+        helpAbout.setIcon(Utils.createImageIcon("images/about_small.png", "About this tool"));
         help.add(helpAbout);
 
         fileExit.addActionListener(actionEvent -> {
             /**
              * Not sure if this is the correct method. If not, bite me!!!
              *
-             * But using System.exit(0) is not cool.
+             * But using System.exit(0) is not cool I think.
              */
             ChromeForensicsGui.getInstance().dispose();
             //System.exit(0);
         });
-
     }
 }

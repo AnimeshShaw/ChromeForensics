@@ -23,8 +23,8 @@ public class ChromeForensicsGui {
 
     private static JFrame frame;
 
-    private final int WIDTH = 800;
-    private final int HEIGHT = 600;
+    private final int WIDTH = 1000;
+    private final int HEIGHT = 640;
 
     public ChromeForensicsGui() {
         frame = new JFrame("Chrome Forensics v1.0");
