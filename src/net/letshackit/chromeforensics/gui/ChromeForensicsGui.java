@@ -19,35 +19,20 @@ package net.letshackit.chromeforensics.gui;
 import javax.swing.*;
 import java.awt.*;
 
-public class ChromeForensicsGui {
+public class ChromeForensicsGui extends JFrame {
+
+    private static ChromeForensicsGui cfGui = new ChromeForensicsGui();
 
     private static JFrame frame;
 
     private final int WIDTH = 1000;
     private final int HEIGHT = 640;
 
-    public ChromeForensicsGui() {
-        frame = new JFrame("Chrome Forensics v1.0");
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        frame.setMinimumSize(new Dimension(500, 500));
-        MainPanel mPanel = new MainPanel(WIDTH, HEIGHT);
-        frame.setContentPane(mPanel);
-        frame.setJMenuBar(new MainMenuBar());
-        frame.setVisible(true);
-        frame.pack();
-    }
-
-    public static JFrame getInstance() {
-        return frame;
-    }
-
-    public static void main(String[] args) {
+    private ChromeForensicsGui() {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                        UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
@@ -56,6 +41,21 @@ public class ChromeForensicsGui {
             e.printStackTrace();
         }
 
-        SwingUtilities.invokeLater(ChromeForensicsGui::new);
+        setTitle("Chrome Forensics v1.0");
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setMinimumSize(new Dimension(500, 500));
+        setContentPane(new MainPanel(WIDTH, HEIGHT));
+        setJMenuBar(new MainMenuBar());
+        pack();
+    }
+
+    public static ChromeForensicsGui getInstance() {
+        return cfGui;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> getInstance().setVisible(true));
     }
 }
