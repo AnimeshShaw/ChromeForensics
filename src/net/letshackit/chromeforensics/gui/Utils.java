@@ -17,9 +17,15 @@
 package net.letshackit.chromeforensics.gui;
 
 import javax.swing.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 
 public final class Utils {
+
+    private static final int[] SQLITE_MAGIC_HEADER = {
+            0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00
+    };
 
     public Utils() {
     }
@@ -32,6 +38,19 @@ public final class Utils {
             System.err.println("Couldn't find file: " + path);
             return null;
         }
+    }
+
+    protected static boolean checkIfSQLiteDb(String dbPath) {
+        try (FileInputStream fis = new FileInputStream(dbPath)) {
+            for (int i : SQLITE_MAGIC_HEADER) {
+                if (fis.read() != i) {
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
 }
