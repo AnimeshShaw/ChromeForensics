@@ -218,9 +218,9 @@ public class MainPanel extends JPanel {
                     Path dbPath = fc.getSelectedFile().toPath();
                     if (Utils.checkIfSQLiteDb(dbPath.toString())) {
                         loadedDbPath.setText(dbPath.toString());
-                        dbManager.setDbPath(dbPath);
-                        dbManager.initialize();
                         try {
+                            dbManager.setDbPath(dbPath);
+                            dbManager.initialize();
                             showTablesList.setListData(dbManager.getTables().toArray());
                             showTablesList.setEnabled(true);
                         } catch (SQLException e) {
