@@ -23,12 +23,14 @@ public class ChromeForensicsGui extends JFrame {
 
     private static ChromeForensicsGui cfGui = new ChromeForensicsGui();
 
-    private static JFrame frame;
-
-    private final int WIDTH = 1000;
-    private final int HEIGHT = 640;
+    private final int WIDTH;
+    private final int HEIGHT;
 
     private ChromeForensicsGui() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        WIDTH = screenSize.width - 10;
+        HEIGHT = screenSize.height - 50;
+
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -45,7 +47,6 @@ public class ChromeForensicsGui extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        setMinimumSize(new Dimension(500, 500));
         setContentPane(new MainPanel(WIDTH, HEIGHT));
         setJMenuBar(new MainMenuBar());
         pack();

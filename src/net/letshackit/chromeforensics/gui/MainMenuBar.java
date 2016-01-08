@@ -20,32 +20,32 @@ import javax.swing.*;
 
 public class MainMenuBar extends JMenuBar {
 
-    private JMenu file;
-    private JMenu tools;
-    private JMenu export;
-    private JMenu help;
-    private JMenu filter;
+    protected JMenu file;
+    protected JMenu tools;
+    protected JMenu export;
+    protected JMenu help;
+    protected JMenu filter;
 
-    private JMenuItem fileLoadData;
-    private JMenuItem fileExit;
-    private JMenuItem fileAutoSearch;
-    private JMenuItem exportCsv;
-    private JMenuItem exportHtml;
-    private JMenuItem helpGetHelp;
-    private JMenuItem helpAbout;
-    private JMenuItem filterGoogle;
-    private JMenuItem filterBing;
-    private JMenuItem filterYahoo;
-    private JMenuItem filterDuckDuckgo;
-    private JMenuItem filterSearchEngines;
-    private JMenuItem executeQuery;
-    private JMenuItem dataBrowser;
-    private JMenuItem clearQuery;
+    protected JMenuItem fileLoadData;
+    protected JMenuItem fileExit;
+    protected JMenuItem fileAutoSearch;
+    protected JMenuItem exportCsv;
+    protected JMenuItem exportHtml;
+    protected JMenuItem helpGetHelp;
+    protected JMenuItem helpAbout;
+    protected JMenuItem filterGoogle;
+    protected JMenuItem filterBing;
+    protected JMenuItem filterYahoo;
+    protected JMenuItem filterDuckDuckgo;
+    protected JMenuItem filterSearchEngines;
+    protected JMenuItem executeQuery;
+    protected JMenuItem dataBrowser;
+    protected JMenuItem clearQuery;
 
-    private JSeparator fileSep;
-    private JSeparator toolsSep, toolsSep2, toolsSep3;
-    private JSeparator exportSep;
-    private JSeparator helpSep;
+    protected JSeparator fileSep;
+    protected JSeparator toolsSep, toolsSep2, toolsSep3;
+    protected JSeparator exportSep;
+    protected JSeparator helpSep;
 
     public MainMenuBar() {
         file = new JMenu("File");
@@ -138,13 +138,7 @@ public class MainMenuBar extends JMenuBar {
         help.add(helpAbout);
 
         fileExit.addActionListener(actionEvent -> {
-            /**
-             * Not sure if this is the correct method. If not, bite me!!!
-             *
-             * But using System.exit(0) is not cool I think.
-             */
             ChromeForensicsGui.getInstance().dispose();
-            //System.exit(0);
         });
     }
 }
