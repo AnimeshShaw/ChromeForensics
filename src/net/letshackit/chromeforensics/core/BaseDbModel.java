@@ -81,7 +81,7 @@ abstract class BaseDbModel {
      * @throws SQLException
      */
     public void setConnection() throws ClassNotFoundException, SQLException {
-        assert driver != null && conn != null;
+        assert driver != null && connUrl != null;
         Class.forName(driver);
         conn = DriverManager.getConnection(connUrl);
     }

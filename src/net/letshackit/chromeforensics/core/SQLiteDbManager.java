@@ -16,9 +16,49 @@
 
 package net.letshackit.chromeforensics.core;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 /**
  * @author Psycho_Coder
  */
-public class SQLiteDbManager {
+public class SQLiteDbManager extends BaseDbModel {
+
+    private final String sDriver;
+    private final String sConnUrl;
+
+    public SQLiteDbManager(String dbPath) throws FileNotFoundException {
+        sDriver = "org.sqlite.JDBC";
+        if (Files.exists(Paths.get(dbPath))) {
+            sConnUrl = "jdbc:sqlite:" + dbPath;
+        } else {
+            throw new FileNotFoundException("The database file at the given location wasn't found.");
+        }
+        initialize(sDriver, sConnUrl);
+    }
+
+    public ArrayList<String> getTables() throws SQLException {
+        String TABLE_NAME = "TABLE_NAME";
+        String[] TABLE_TYPES = {"TABLE"};
+        ArrayList<String> tableList = new ArrayList<>();
+
+        DatabaseMetaData dbmd = this.getConnection().getMetaData();
+        ResultSet tables = dbmd.getTables(null, null, null, TABLE_TYPES);
+
+        while (tables.next()) {
+            tableList.add(tables.getString(TABLE_NAME));
+        }
+
+        return tableList;
+    }
+
+    public ArrayList<String> getColumnList(String tableName) {
+        return null;
+    }
 
 }
