@@ -9,7 +9,7 @@ abstract class BaseDbModel {
 
     public String driver = null;
     public String connUrl = null;
-    public int connTimeout = 30;
+    public int connTimeout = 60;
     public Connection conn = null;
     public Statement stmt = null;
 
@@ -151,7 +151,7 @@ abstract class BaseDbModel {
      * @throws ClassNotFoundException
      */
     public void setStatement() throws SQLException, ClassNotFoundException {
-        if (conn != null) {
+        if (getConnection() != null) {
             setConnection();
         }
         stmt = conn.createStatement();
@@ -163,6 +163,17 @@ abstract class BaseDbModel {
      */
     public Statement getStatement() {
         return stmt;
+    }
+
+    /**
+     *
+     */
+    public void closeStatement() {
+        try {
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

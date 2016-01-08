@@ -17,29 +17,52 @@
 package net.letshackit.chromeforensics.core;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * @author Psycho_Coder
  */
 public class SQLiteDbManager extends BaseDbModel {
 
-    private final String sDriver;
-    private final String sConnUrl;
+    private String sDriver;
+    private String sConnUrl;
+
+    private Path dbPath;
+
+    public SQLiteDbManager() {
+        sDriver = "org.sqlite.JDBC";
+    }
 
     public SQLiteDbManager(String dbPath) throws FileNotFoundException {
         sDriver = "org.sqlite.JDBC";
-        if (Files.exists(Paths.get(dbPath))) {
-            sConnUrl = "jdbc:sqlite:" + dbPath;
-        } else {
-            throw new FileNotFoundException("The database file at the given location wasn't found.");
-        }
+        sConnUrl = "jdbc:sqlite:" + dbPath;
+
         initialize(sDriver, sConnUrl);
+    }
+
+    public void initialize() {
+        assert getDbPath() != null;
+        initialize(sDriver, sConnUrl);
+    }
+
+    public void setDbPath(Path dbPath) {
+        this.dbPath = dbPath;
+        sConnUrl = "jdbc:sqlite:" + dbPath;
+    }
+
+    public void close() throws SQLException {
+        closeConnection();
+        closeStatement();
+    }
+
+    public Path getDbPath() {
+        return dbPath;
     }
 
     public ArrayList<String> getTables() throws SQLException {
@@ -57,8 +80,14 @@ public class SQLiteDbManager extends BaseDbModel {
         return tableList;
     }
 
-    public ArrayList<String> getColumnList(String tableName) {
-        return null;
+    public Vector<String> getColumnNames(ResultSet rs) throws SQLException {
+        ResultSetMetaData rsmd = rs.getMetaData();
+        Vector<String> colNames = new Vector<>();
+        int colCount = rsmd.getColumnCount();
+        for (int i = 1; i <= colCount; i++) {
+            colNames.add(rsmd.getColumnName(i));
+        }
+        return colNames;
     }
 
 }
