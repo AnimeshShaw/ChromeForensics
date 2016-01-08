@@ -20,14 +20,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ChromeForensics {
+public final class ChromeForensics {
 
     /**
      * Essential System environment variables.
      */
     private final String USER_HOME;
     private final String OS;
-    private final String WINDOWS_7UP_CHROME_DATAPATH;
+    private final String WINDOWS_VISTAUP_CHROME_DATAPATH;
     private final String WINDOWS_XP_CHROME_DATAPATH;
 
     /**
@@ -35,14 +35,15 @@ public class ChromeForensics {
      *
      * --To be Updated--
      */
-    private String DOWNLOADS_DB_PATH;
-    private String HISTORY_DB_PATH;
+    private final String HISTORY_DB_PATH;
 
     public ChromeForensics() {
         USER_HOME = System.getProperty("user.home");
         OS = System.getProperty("os.name");
-        WINDOWS_7UP_CHROME_DATAPATH = "AppData/Local/Google/Chrome/User Data/Default";
+        WINDOWS_VISTAUP_CHROME_DATAPATH = "AppData/Local/Google/Chrome/User Data/Default";
         WINDOWS_XP_CHROME_DATAPATH = "/Local Settings/Application Data/Google/Chrome/User Data/Default";
+        assert getChromeDataPath() != null;
+        HISTORY_DB_PATH = Paths.get(getChromeDataPath().toString(), "History").toString();
     }
 
     /**
@@ -77,17 +78,17 @@ public class ChromeForensics {
     }
 
     /**
-     *
+     * Needs update
      * @return
      */
-    private Path getChromeDataPath() {
-        Path path = null;
+    public Path getChromeDataPath() {
+        Path path;
         switch (getOSType()){
             case WINDOWS_81:
             case WINDOWS_8:
             case WINDOWS_7:
             case WINDOWS_VISTA:
-                path = Paths.get(USER_HOME, WINDOWS_7UP_CHROME_DATAPATH);
+                path = Paths.get(USER_HOME, WINDOWS_VISTAUP_CHROME_DATAPATH);
                 assert Files.exists(path) && Files.isDirectory(path);
                 return path;
             case WINDOWS_XP:
@@ -99,13 +100,11 @@ public class ChromeForensics {
             case NOT_SUPPORTED:
                 break;
         }
-        return path;
+        return null;
     }
 
-    public static void main(String[] args) {
-        /**
-         * dummy
-         */
-        System.out.println(System.getenv("APPDATA"));
+    public String getHistoryDbPath() {
+        return HISTORY_DB_PATH;
     }
+
 }
