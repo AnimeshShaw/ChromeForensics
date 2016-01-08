@@ -205,7 +205,7 @@ public class MainPanel extends JPanel {
 
             loadDbLabel = new JLabel("Load SQLite Database (.sqlite|.sqlite3|.db|.db3)");
 
-            loadedDbPath = new JTextField("Click browse to choose the database file.", 50);
+            loadedDbPath = new JTextField("Click browse to choose the database file.", 70);
             loadedDbPath.setForeground(Color.GRAY);
             loadedDbPath.setFont(new Font("Times New Roman", Font.ITALIC, 13));
             loadedDbPath.setEditable(false);
@@ -259,10 +259,10 @@ public class MainPanel extends JPanel {
             }
 
             DataBrowserTableModal tableModal = new DataBrowserTableModal();
-
             defaultTableModel = tableModal;
 
             table = new JTable();
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             table.setModel(defaultTableModel);
 
             showTablesList.addMouseListener(new MouseAdapter() {
