@@ -140,5 +140,8 @@ public class MainMenuBar extends JMenuBar {
         fileExit.addActionListener(actionEvent -> {
             ChromeForensicsGui.getInstance().dispose();
         });
+        dataBrowser.addActionListener(actionEvent -> {
+            MainPanel.getInstance().tabbedPane.setSelectedIndex(6);
+        });
     }
 }

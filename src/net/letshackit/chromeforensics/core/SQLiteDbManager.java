@@ -89,5 +89,4 @@ public class SQLiteDbManager extends BaseDbModel {
         }
         return colNames;
     }
-
 }
