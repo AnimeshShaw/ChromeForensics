@@ -65,14 +65,21 @@ final class SQLiteDataBrowser extends JPanel {
                 Path dbPath = fc.getSelectedFile().toPath();
                 if (Utils.checkIfSQLiteDb(dbPath.toString())) {
                     loadedDbPath.setText(dbPath.toString());
-                    try {
-                        dbManager.setDbPath(dbPath);
-                        dbManager.initialize();
-                        showTablesList.setListData(dbManager.getTables().toArray());
-                        showTablesList.setEnabled(true);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+                    new SwingWorker<Void, Void>() {
+
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            try {
+                                dbManager.setDbPath(dbPath);
+                                dbManager.initialize();
+                                showTablesList.setListData(dbManager.getTables().toArray());
+                                showTablesList.setEnabled(true);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                    }.execute();
                 } else {
                     JOptionPane.showMessageDialog(SQLiteDataBrowser.this, "The Selected file is not in SQLite Format",
                             "File Format Error", JOptionPane.ERROR_MESSAGE);

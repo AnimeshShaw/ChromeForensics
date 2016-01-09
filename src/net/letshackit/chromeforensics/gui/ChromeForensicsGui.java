@@ -28,8 +28,8 @@ public class ChromeForensicsGui extends JFrame {
 
     private ChromeForensicsGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        WIDTH = screenSize.width - 10;
-        HEIGHT = screenSize.height - 50;
+        WIDTH = 1000; //screenSize.width - 10;
+        HEIGHT = 600; //screenSize.height - 50;
 
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -43,11 +43,13 @@ public class ChromeForensicsGui extends JFrame {
             e.printStackTrace();
         }
 
+        JPanel mainPanel = MainPanel.getInstance();
+
         setTitle("Chrome Forensics v1.0");
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        setContentPane(new MainPanel(WIDTH, HEIGHT));
+        setContentPane(mainPanel);
         setJMenuBar(new MainMenuBar());
         setIconImage(Utils.createImageIcon("images/chrome_forensics.png", "Chrome Forensics").getImage());
         pack();

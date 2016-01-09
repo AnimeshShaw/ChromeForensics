@@ -20,6 +20,8 @@ import net.letshackit.chromeforensics.core.ChromeForensics;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainPanel extends JPanel {
@@ -28,6 +30,8 @@ public class MainPanel extends JPanel {
 
     private int WIDTH = 1000;
     private int HEIGHT = 600;
+
+    private Map<Integer, JPanel> tabbedPanelDetails;
 
     protected JToolBar toolBar;
 
@@ -86,13 +90,27 @@ public class MainPanel extends JPanel {
     private void initComponents() {
         /* Base Initialization */
         setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         cf = new ChromeForensics();
 
         /* Toolbar Code Started */
+        initToolBar();
+        add(toolBar, BorderLayout.NORTH);
+        /*Toolbar Code ends*/
+
+        /* JTabbedPane Code Started*/
+        initTabbedPane();
+        add(tabbedPane, BorderLayout.CENTER);
+        /* JTabbedPane Code Ended*/
+
+        add(new FilterPanel(), BorderLayout.SOUTH);
+    }
+
+    private void initToolBar() {
         toolBar = new JToolBar();
         toolBar.setOrientation(JToolBar.HORIZONTAL);
         toolBar.setFloatable(false);
-        toolBar.setPreferredSize(new Dimension(getWidth(), 50));
+        toolBar.setPreferredSize(new Dimension(getWidth(), 40));
 
         manuallyLoadData = new JButton();
         manuallyLoadData.setIcon(Utils.createImageIcon("images/loaddata.png", "Load Data"));
@@ -137,10 +155,9 @@ public class MainPanel extends JPanel {
         exitButton.setToolTipText("Exit Application");
         exitButton.addActionListener(actionEvent -> ChromeForensicsGui.getInstance().dispose());
         toolBar.add(exitButton);
+    }
 
-        add(toolBar, BorderLayout.NORTH);
-        /*Toolbar Code ends*/
-
+    private void initTabbedPane() {
         visits = new JPanel();
         urls = new JPanel();
         downloads = new JPanel();
@@ -156,24 +173,36 @@ public class MainPanel extends JPanel {
         tabbedPane.addTab("Favicons", favicons);
         tabbedPane.addTab("Run Custom Query", customQuery);
         tabbedPane.addTab("Data Browser", new SQLiteDataBrowser());
-        add(tabbedPane, BorderLayout.CENTER);
 
-        add(new FilterPanel(), BorderLayout.SOUTH);
+        tabbedPanelDetails = new HashMap<>();
+        tabbedPanelDetails.put(1, visits);
     }
 
     /**
-     * @return
+     * Get the Width of the MainPanel.
+     *
+     * @return returns the height of the Component.
      */
     public final int getWidth() {
         return WIDTH;
     }
 
     /**
+     *  Get the Height of the MainPanel.
      *
-     * @return
+     * @return returns the height of the Component.
      */
     public final int getHeight() {
         return HEIGHT;
+    }
+
+    /**
+     * Returns the selected index of the tab.
+     *
+     * @return int
+     */
+    public int getSelectedTabIndex() {
+        return tabbedPane.getSelectedIndex();
     }
 
     /**
@@ -184,7 +213,7 @@ public class MainPanel extends JPanel {
     final class FilterPanel extends JPanel {
 
         public FilterPanel() {
-            setPreferredSize(new Dimension(getWidth(), 60));
+            setPreferredSize(new Dimension(getWidth(), 40));
             setBackground(Color.LIGHT_GRAY);
         }
     }
