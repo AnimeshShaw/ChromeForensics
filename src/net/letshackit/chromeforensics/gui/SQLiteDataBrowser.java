@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Path;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -17,13 +17,19 @@ final class SQLiteDataBrowser extends JPanel {
 
     private JList showTablesList;
     private JLabel loadDbLabel;
+    private JLabel loadDbRecords;
+    private JLabel loadDbRecordsCount;
     private JTextField loadedDbPath;
     private JPanel loadDbPanel;
     private JScrollPane showTablesListScroller;
     private JScrollPane tableScrollPane;
     private JButton browseDb;
     private JTable table;
+    private JFileChooser fc;
+
     private final DefaultTableModel defaultTableModel;
+
+    private File lastFolderLocation;
 
     public SQLiteDataBrowser() {
         SQLiteDbManager dbManager = new SQLiteDbManager();
@@ -33,6 +39,7 @@ final class SQLiteDataBrowser extends JPanel {
         showTablesList = new JList();
         showTablesList.setLayoutOrientation(JList.VERTICAL_WRAP);
         showTablesList.setSelectedIndex(ListSelectionModel.SINGLE_SELECTION);
+        showTablesList.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         showTablesList.setFont(new Font("Times New Roman", Font.PLAIN, 13));
         showTablesList.setDragEnabled(false);
         showTablesList.setFixedCellWidth(150);
@@ -50,27 +57,31 @@ final class SQLiteDataBrowser extends JPanel {
         loadDbPanel.setBackground(new Color(0xe8e8e8));
         loadDbPanel.setPreferredSize(new Dimension(getWidth(), 40));
 
-        loadDbLabel = new JLabel("Load SQLite Database (.sqlite|.sqlite3|.db|.db3)");
+        loadDbLabel = new JLabel("Load SQLite Database: ");
+        loadDbLabel.setToolTipText("Possible extensions being .sqlite|.sqlite3|.db|.db3");
 
         loadedDbPath = new JTextField("Click browse to choose the database file.", 60);
         loadedDbPath.setForeground(Color.GRAY);
         loadedDbPath.setFont(new Font("Times New Roman", Font.ITALIC, 13));
         loadedDbPath.setEditable(false);
 
+        lastFolderLocation = new File(Utils.getUserHome());
+        fc = new JFileChooser(lastFolderLocation);
+
         browseDb = new JButton("Browse");
         browseDb.addActionListener(actionEvent -> {
-            JFileChooser fc = new JFileChooser();
             int retVal = fc.showOpenDialog(SQLiteDataBrowser.this);
             if (retVal == JFileChooser.APPROVE_OPTION) {
-                Path dbPath = fc.getSelectedFile().toPath();
-                if (Utils.checkIfSQLiteDb(dbPath.toString())) {
+                File dbPath = fc.getSelectedFile();
+                if (Utils.checkIfSQLiteDb(dbPath)) {
                     loadedDbPath.setText(dbPath.toString());
+                    lastFolderLocation = fc.getCurrentDirectory();
                     new SwingWorker<Void, Void>() {
 
                         @Override
                         protected Void doInBackground() throws Exception {
                             try {
-                                dbManager.setDbPath(dbPath);
+                                dbManager.setDbPath(dbPath.toString());
                                 dbManager.initialize();
                                 showTablesList.setListData(dbManager.getTables().toArray());
                                 showTablesList.setEnabled(true);
@@ -92,7 +103,15 @@ final class SQLiteDataBrowser extends JPanel {
         loadDbPanel.add(loadedDbPath);
         loadDbPanel.add(browseDb);
 
-        class DataBrowserTableModal extends DefaultTableModel {
+        loadDbRecords = new JLabel("Records Fetched (Rows x Cols): ");
+        loadDbRecords.setFont(new Font("Times New Roman", Font.ITALIC, 12));
+        loadDbPanel.add(loadDbRecords);
+
+        loadDbRecordsCount = new JLabel();
+        loadDbRecordsCount.setFont(new Font("Times New Roman", Font.ITALIC, 12));
+        loadDbPanel.add(loadDbRecordsCount);
+
+        final class DataBrowserTableModal extends DefaultTableModel {
 
             public DataBrowserTableModal() {
             }
@@ -116,7 +135,6 @@ final class SQLiteDataBrowser extends JPanel {
         defaultTableModel = tableModal;
 
         table = new JTable();
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setModel(defaultTableModel);
 
         showTablesList.addMouseListener(new MouseAdapter() {
@@ -146,6 +164,16 @@ final class SQLiteDataBrowser extends JPanel {
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
+
+                            loadDbRecordsCount.setText(defaultTableModel.getRowCount() + " x "
+                                    + defaultTableModel.getColumnCount());
+
+                            if (defaultTableModel.getColumnCount() < 5) {
+                                table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                            } else {
+                                table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+                            }
+
                             return null;
                         }
                     }.execute();

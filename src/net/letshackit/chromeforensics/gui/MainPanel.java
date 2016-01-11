@@ -64,19 +64,7 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * MainPanel constructor to initialize the components.
-     *
-     * @param WIDTH  Width of the JPanel
-     * @param HEIGHT Height of the JPanel
-     */
-    public MainPanel(int WIDTH, int HEIGHT) {
-        this.WIDTH = WIDTH;
-        this.HEIGHT = HEIGHT;
-        initComponents();
-    }
-
-    /**
-     * An instance of this MainPanel. The MainPanel uses the Singleton pattern.
+     * Single instance of this MainPanel. The MainPanel uses the Singleton pattern.
      *
      * @return returns a singleton instance of this Component
      */
@@ -90,6 +78,9 @@ public class MainPanel extends JPanel {
     private void initComponents() {
         /* Base Initialization */
         setLayout(new BorderLayout());
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        WIDTH = screenSize.width;
+        HEIGHT = screenSize.height - 40;
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         cf = new ChromeForensics();
 
@@ -166,16 +157,16 @@ public class MainPanel extends JPanel {
         customQuery = new JPanel();
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Visits", visits);
-        tabbedPane.addTab("URLs", urls);
+        tabbedPane.addTab("Visited Sites", visits);
+        tabbedPane.addTab("Urls", urls);
         tabbedPane.addTab("Downloads", downloads);
-        tabbedPane.addTab("Keyword Searches", keywords);
+        tabbedPane.addTab("Keyword Search Terms", keywords);
         tabbedPane.addTab("Favicons", favicons);
-        tabbedPane.addTab("Run Custom Query", customQuery);
-        tabbedPane.addTab("Data Browser", new SQLiteDataBrowser());
+        tabbedPane.addTab("Custom SQL Query", customQuery);
+        tabbedPane.addTab("SQLite Data Browser", new SQLiteDataBrowser());
 
         tabbedPanelDetails = new HashMap<>();
-        tabbedPanelDetails.put(1, visits);
+        tabbedPanelDetails.put(0, visits);
     }
 
     /**
@@ -203,6 +194,13 @@ public class MainPanel extends JPanel {
      */
     public int getSelectedTabIndex() {
         return tabbedPane.getSelectedIndex();
+    }
+
+    /**
+     * @return
+     */
+    public Map<Integer, JPanel> getTabbedPaneComponentDetails() {
+        return tabbedPanelDetails;
     }
 
     /**

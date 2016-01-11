@@ -17,7 +17,6 @@
 package net.letshackit.chromeforensics.core;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,13 +32,14 @@ public class SQLiteDbManager extends BaseDbModel {
     private String sDriver;
     private String sConnUrl;
 
-    private Path dbPath;
+    private String dbPath;
 
     public SQLiteDbManager() {
         sDriver = "org.sqlite.JDBC";
     }
 
     public SQLiteDbManager(String dbPath) throws FileNotFoundException {
+        this.dbPath = dbPath;
         sDriver = "org.sqlite.JDBC";
         sConnUrl = "jdbc:sqlite:" + dbPath;
 
@@ -51,7 +51,7 @@ public class SQLiteDbManager extends BaseDbModel {
         initialize(sDriver, sConnUrl);
     }
 
-    public void setDbPath(Path dbPath) {
+    public void setDbPath(String dbPath) {
         this.dbPath = dbPath;
         sConnUrl = "jdbc:sqlite:" + dbPath;
     }
@@ -61,7 +61,7 @@ public class SQLiteDbManager extends BaseDbModel {
         closeStatement();
     }
 
-    public Path getDbPath() {
+    public String getDbPath() {
         return dbPath;
     }
 

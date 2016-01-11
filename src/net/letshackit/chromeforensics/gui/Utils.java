@@ -17,6 +17,7 @@
 package net.letshackit.chromeforensics.gui;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +31,10 @@ public final class Utils {
     public Utils() {
     }
 
+    protected static String getUserHome() {
+        return System.getProperty("user.home");
+    }
+
     protected static ImageIcon createImageIcon(String path, String description) {
         URL imgURL = Utils.class.getResource(path);
         if (imgURL != null) {
@@ -40,7 +45,7 @@ public final class Utils {
         }
     }
 
-    protected static boolean checkIfSQLiteDb(String dbPath) {
+    protected static boolean checkIfSQLiteDb(File dbPath) {
         try (FileInputStream fis = new FileInputStream(dbPath)) {
             for (int i : SQLITE_MAGIC_HEADER) {
                 if (fis.read() != i) {
