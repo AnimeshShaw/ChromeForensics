@@ -1,6 +1,7 @@
-package net.letshackit.chromeforensics.gui;
+package net.letshackit.chromeforensics.gui.tools;
 
 import net.letshackit.chromeforensics.core.SQLiteDbManager;
+import net.letshackit.chromeforensics.gui.Utils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -13,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-final class SQLiteDataBrowser extends JPanel {
+public final class SQLiteDataBrowser extends JPanel {
 
     private JList showTablesList;
     private JLabel loadDbLabel;

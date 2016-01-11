@@ -51,7 +51,7 @@ public class ChromeForensicsGui extends JFrame {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setContentPane(mainPanel);
         setJMenuBar(new MainMenuBar());
-        setIconImage(Utils.createImageIcon("images/chrome_forensics.png", "Chrome Forensics").getImage());
+        setIconImage(Utils.createImageIcon("resources/images/chrome_forensics.png", "Chrome Forensics").getImage());
         pack();
     }
 

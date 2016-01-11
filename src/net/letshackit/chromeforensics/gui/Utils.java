@@ -31,11 +31,11 @@ public final class Utils {
     public Utils() {
     }
 
-    protected static String getUserHome() {
+    public static String getUserHome() {
         return System.getProperty("user.home");
     }
 
-    protected static ImageIcon createImageIcon(String path, String description) {
+    public static ImageIcon createImageIcon(String path, String description) {
         URL imgURL = Utils.class.getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
@@ -45,7 +45,7 @@ public final class Utils {
         }
     }
 
-    protected static boolean checkIfSQLiteDb(File dbPath) {
+    public static boolean checkIfSQLiteDb(File dbPath) {
         try (FileInputStream fis = new FileInputStream(dbPath)) {
             for (int i : SQLITE_MAGIC_HEADER) {
                 if (fis.read() != i) {

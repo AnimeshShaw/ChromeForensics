@@ -17,6 +17,7 @@
 package net.letshackit.chromeforensics.gui;
 
 import net.letshackit.chromeforensics.core.ChromeForensics;
+import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,10 +45,17 @@ public class MainPanel extends JPanel {
     protected JButton aboutButton;
 
     protected JPanel visits;
+    protected JPanel mostVisitedSites;
     protected JPanel urls;
+    protected JPanel logins;
     protected JPanel downloads;
     protected JPanel keywords;
+    protected JPanel bookmarks;
+
+    protected JPanel preferences;
     protected JPanel favicons;
+    protected JPanel cookies;
+
     protected JPanel customQuery;
 
     protected JTable visitsTable;
@@ -94,7 +102,7 @@ public class MainPanel extends JPanel {
         add(tabbedPane, BorderLayout.CENTER);
         /* JTabbedPane Code Ended*/
 
-        add(new FilterPanel(), BorderLayout.SOUTH);
+        add(new StatusBar(), BorderLayout.SOUTH);
     }
 
     private void initToolBar() {
@@ -104,25 +112,25 @@ public class MainPanel extends JPanel {
         toolBar.setPreferredSize(new Dimension(getWidth(), 40));
 
         manuallyLoadData = new JButton();
-        manuallyLoadData.setIcon(Utils.createImageIcon("images/loaddata.png", "Load Data"));
+        manuallyLoadData.setIcon(Utils.createImageIcon("resources/images/loaddata.png", "Load Data"));
         manuallyLoadData.setToolTipText("Manually locate the chrome data files folder.");
         toolBar.add(manuallyLoadData);
 
         autoLoadData = new JButton();
-        autoLoadData.setIcon(Utils.createImageIcon("images/autosearch.png", "Auto Search and Load Data"));
+        autoLoadData.setIcon(Utils.createImageIcon("resources/images/autosearch.png", "Auto Search and Load Data"));
         autoLoadData.setToolTipText("Automatically search and load chrome files.");
         toolBar.add(autoLoadData);
 
         toolBar.add(new JToolBar.Separator());
 
         exportCsv = new JButton("Export to");
-        exportCsv.setIcon(Utils.createImageIcon("images/csv.png", "Export results to CSV"));
+        exportCsv.setIcon(Utils.createImageIcon("resources/images/csv.png", "Export results to CSV"));
         exportCsv.setToolTipText("Export Results to CSV");
         exportCsv.setHorizontalTextPosition(SwingConstants.LEFT);
         toolBar.add(exportCsv);
 
         exportHtml = new JButton("Export to");
-        exportHtml.setIcon(Utils.createImageIcon("images/html.png", "Export results to HTML"));
+        exportHtml.setIcon(Utils.createImageIcon("resources/images/html.png", "Export results to HTML"));
         exportHtml.setToolTipText("Export results to HTML.");
         exportHtml.setHorizontalTextPosition(SwingConstants.LEFT);
         toolBar.add(exportHtml);
@@ -130,19 +138,19 @@ public class MainPanel extends JPanel {
         toolBar.add(new JToolBar.Separator());
 
         helpButton = new JButton();
-        helpButton.setIcon(Utils.createImageIcon("images/help.png", "Need Help? Click Me!"));
+        helpButton.setIcon(Utils.createImageIcon("resources/images/help.png", "Need Help? Click Me!"));
         helpButton.setToolTipText("Need Help? Click Me!");
         toolBar.add(helpButton);
 
         aboutButton = new JButton();
-        aboutButton.setIcon(Utils.createImageIcon("images/about.png", "About this tool!"));
+        aboutButton.setIcon(Utils.createImageIcon("resources/images/about.png", "About this tool!"));
         aboutButton.setToolTipText("About this tool!");
         toolBar.add(aboutButton);
 
         toolBar.add(new JToolBar.Separator());
 
         exitButton = new JButton();
-        exitButton.setIcon(Utils.createImageIcon("images/exit.png", "Exit Application."));
+        exitButton.setIcon(Utils.createImageIcon("resources/images/exit.png", "Exit Application."));
         exitButton.setToolTipText("Exit Application");
         exitButton.addActionListener(actionEvent -> ChromeForensicsGui.getInstance().dispose());
         toolBar.add(exitButton);
@@ -156,6 +164,8 @@ public class MainPanel extends JPanel {
         favicons = new JPanel();
         customQuery = new JPanel();
 
+        SQLiteDataBrowser dbBrowser = new SQLiteDataBrowser();
+
         tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Visited Sites", visits);
         tabbedPane.addTab("Urls", urls);
@@ -163,10 +173,16 @@ public class MainPanel extends JPanel {
         tabbedPane.addTab("Keyword Search Terms", keywords);
         tabbedPane.addTab("Favicons", favicons);
         tabbedPane.addTab("Custom SQL Query", customQuery);
-        tabbedPane.addTab("SQLite Data Browser", new SQLiteDataBrowser());
+        tabbedPane.addTab("SQLite Data Browser", dbBrowser);
 
         tabbedPanelDetails = new HashMap<>();
         tabbedPanelDetails.put(0, visits);
+        tabbedPanelDetails.put(1, urls);
+        tabbedPanelDetails.put(2, downloads);
+        tabbedPanelDetails.put(3, keywords);
+        tabbedPanelDetails.put(4, favicons);
+        tabbedPanelDetails.put(5, customQuery);
+        tabbedPanelDetails.put(6, dbBrowser);
     }
 
     /**
@@ -197,6 +213,15 @@ public class MainPanel extends JPanel {
     }
 
     /**
+     * Focuses the tab at index i
+     *
+     * @param i sets the current selected tab.
+     */
+    public void setSelectedTabIndex(int i) {
+        tabbedPane.setSelectedIndex(i);
+    }
+
+    /**
      * @return
      */
     public Map<Integer, JPanel> getTabbedPaneComponentDetails() {
@@ -204,13 +229,13 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Filter Panel to be added to the main GUI to filter results according to users requirements.
+     * Status Bar to be added to the Main Panel
      *
      * @author Psycho_Coder
      */
-    final class FilterPanel extends JPanel {
+    final class StatusBar extends JPanel {
 
-        public FilterPanel() {
+        public StatusBar() {
             setPreferredSize(new Dimension(getWidth(), 40));
             setBackground(Color.LIGHT_GRAY);
         }
