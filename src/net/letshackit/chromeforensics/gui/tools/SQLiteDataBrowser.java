@@ -132,8 +132,7 @@ public final class SQLiteDataBrowser extends JPanel {
             }
         }
 
-        DataBrowserTableModal tableModal = new DataBrowserTableModal();
-        defaultTableModel = tableModal;
+        defaultTableModel = new DataBrowserTableModal();
 
         table = new JTable();
         table.setModel(defaultTableModel);
