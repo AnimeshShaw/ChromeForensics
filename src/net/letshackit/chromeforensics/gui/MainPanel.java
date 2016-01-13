@@ -17,6 +17,7 @@
 package net.letshackit.chromeforensics.gui;
 
 import net.letshackit.chromeforensics.core.ChromeForensics;
+import net.letshackit.chromeforensics.gui.tools.FileViewer;
 import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
 
 import javax.swing.*;
@@ -51,10 +52,10 @@ public class MainPanel extends JPanel {
     protected JPanel downloads;
     protected JPanel keywords;
     protected JPanel bookmarks;
-
+    protected JPanel cookies;
     protected JPanel preferences;
     protected JPanel favicons;
-    protected JPanel cookies;
+
 
     protected JPanel customQuery;
 
@@ -158,31 +159,49 @@ public class MainPanel extends JPanel {
 
     private void initTabbedPane() {
         visits = new JPanel();
+        mostVisitedSites = new JPanel();
         urls = new JPanel();
+        logins = new JPanel();
         downloads = new JPanel();
         keywords = new JPanel();
+        bookmarks = new JPanel();
+        cookies = new JPanel();
+        preferences = new JPanel();
         favicons = new JPanel();
         customQuery = new JPanel();
 
         SQLiteDataBrowser dbBrowser = new SQLiteDataBrowser();
+        FileViewer fileViewer = FileViewer.getInstance();
 
         tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Visited Sites", visits);
-        tabbedPane.addTab("Urls", urls);
+        tabbedPane.addTab("Most Visited Sites", mostVisitedSites);
+        tabbedPane.addTab("All Urls", urls);
+        tabbedPane.addTab("Logins", logins);
         tabbedPane.addTab("Downloads", downloads);
         tabbedPane.addTab("Keyword Search Terms", keywords);
+        tabbedPane.addTab("Bookmarks", bookmarks);
+        tabbedPane.addTab("Cookies", cookies);
+        tabbedPane.addTab("Preferences", preferences);
         tabbedPane.addTab("Favicons", favicons);
         tabbedPane.addTab("Custom SQL Query", customQuery);
         tabbedPane.addTab("SQLite Data Browser", dbBrowser);
+        tabbedPane.addTab("File Viewer", fileViewer);
 
         tabbedPanelDetails = new HashMap<>();
         tabbedPanelDetails.put(0, visits);
-        tabbedPanelDetails.put(1, urls);
-        tabbedPanelDetails.put(2, downloads);
-        tabbedPanelDetails.put(3, keywords);
-        tabbedPanelDetails.put(4, favicons);
-        tabbedPanelDetails.put(5, customQuery);
-        tabbedPanelDetails.put(6, dbBrowser);
+        tabbedPanelDetails.put(1, mostVisitedSites);
+        tabbedPanelDetails.put(2, urls);
+        tabbedPanelDetails.put(3, logins);
+        tabbedPanelDetails.put(4, downloads);
+        tabbedPanelDetails.put(5, keywords);
+        tabbedPanelDetails.put(6, bookmarks);
+        tabbedPanelDetails.put(7, cookies);
+        tabbedPanelDetails.put(8, preferences);
+        tabbedPanelDetails.put(9, favicons);
+        tabbedPanelDetails.put(10, customQuery);
+        tabbedPanelDetails.put(11, dbBrowser);
+        tabbedPanelDetails.put(12, fileViewer);
     }
 
     /**
