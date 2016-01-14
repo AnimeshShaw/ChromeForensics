@@ -21,7 +21,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -65,10 +64,10 @@ public class SQLiteDbManager extends BaseDbModel {
         return dbPath;
     }
 
-    public ArrayList<String> getTables() throws SQLException {
+    public Vector<String> getTables() throws SQLException {
         String TABLE_NAME = "TABLE_NAME";
         String[] TABLE_TYPES = {"TABLE"};
-        ArrayList<String> tableList = new ArrayList<>();
+        Vector<String> tableList = new Vector<>();
 
         DatabaseMetaData dbmd = this.getConnection().getMetaData();
         ResultSet tables = dbmd.getTables(null, null, null, TABLE_TYPES);

@@ -5,7 +5,11 @@ import net.letshackit.chromeforensics.gui.Utils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +17,7 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
+import java.util.regex.PatternSyntaxException;
 
 public final class SQLiteDataBrowser extends JPanel {
 
@@ -28,7 +33,7 @@ public final class SQLiteDataBrowser extends JPanel {
     private JTable table;
     private JFileChooser fc;
 
-    private final DefaultTableModel defaultTableModel;
+    private final DefaultTableModel tableModel;
 
     private File lastFolderLocation;
 
@@ -84,7 +89,14 @@ public final class SQLiteDataBrowser extends JPanel {
                             try {
                                 dbManager.setDbPath(dbPath.toString());
                                 dbManager.initialize();
-                                showTablesList.setListData(dbManager.getTables().toArray());
+                                Vector<String> tableList = dbManager.getTables();
+                                if (tableList != null) {
+                                    showTablesList.setListData(tableList);
+                                } else {
+                                    JOptionPane.showMessageDialog(SQLiteDataBrowser.this,
+                                            "No tables are present in the selected database",
+                                            "No Records fetched", JOptionPane.ERROR_MESSAGE);
+                                }
                                 showTablesList.setEnabled(true);
                             } catch (SQLException e) {
                                 e.printStackTrace();
@@ -112,30 +124,10 @@ public final class SQLiteDataBrowser extends JPanel {
         loadDbRecordsCount.setFont(new Font("Times New Roman", Font.ITALIC, 12));
         loadDbPanel.add(loadDbRecordsCount);
 
-        final class DataBrowserTableModal extends DefaultTableModel {
-
-            public DataBrowserTableModal() {
-            }
-
-            public DataBrowserTableModal(Object[][] tableData, Object[] colNames) {
-                super(tableData, colNames);
-            }
-
-            @Override
-            public void setDataVector(Object[][] tableData, Object[] colNames) {
-                super.setDataVector(tableData, colNames);
-            }
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        }
-
-        defaultTableModel = new DataBrowserTableModal();
+        tableModel = new DataBrowserTableModal();
 
         table = new JTable();
-        table.setModel(defaultTableModel);
+        table.setModel(tableModel);
 
         showTablesList.addMouseListener(new MouseAdapter() {
             @Override
@@ -160,15 +152,15 @@ public final class SQLiteDataBrowser extends JPanel {
                                     }
                                     tableData.add(vector);
                                 }
-                                defaultTableModel.setDataVector(tableData, columnNames);
+                                tableModel.setDataVector(tableData, columnNames);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
 
-                            loadDbRecordsCount.setText(defaultTableModel.getRowCount() + " x "
-                                    + defaultTableModel.getColumnCount());
+                            loadDbRecordsCount.setText(tableModel.getRowCount() + " x "
+                                    + tableModel.getColumnCount());
 
-                            if (defaultTableModel.getColumnCount() < 5) {
+                            if (tableModel.getColumnCount() <= 5) {
                                 table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
                             } else {
                                 table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -188,5 +180,109 @@ public final class SQLiteDataBrowser extends JPanel {
         add(tableScrollPane, BorderLayout.CENTER);
 
         add(loadDbPanel, BorderLayout.NORTH);
+
+        DBTableFilterPanel filterPanel = new DBTableFilterPanel();
+        table.setRowSorter(filterPanel.getRowSorter());
+        add(filterPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * TableModel to be used for the Browser JTable.
+     */
+    final class DataBrowserTableModal extends DefaultTableModel {
+
+        public DataBrowserTableModal() {
+        }
+
+        public DataBrowserTableModal(Object[][] tableData, Object[] colNames) {
+            super(tableData, colNames);
+        }
+
+        @Override
+        public void setDataVector(Object[][] tableData, Object[] colNames) {
+            super.setDataVector(tableData, colNames);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    }
+
+    /**
+     * Filter Panel to enable searching and
+     */
+    final class DBTableFilterPanel extends JPanel {
+
+        private TableRowSorter<TableModel> rowSorter;
+
+        private JLabel label;
+
+        private JTextField filterField;
+
+        public DBTableFilterPanel() {
+            initComponents();
+        }
+
+        public void initComponents() {
+            setPreferredSize(new Dimension(getWidth(), 80));
+            setBackground(Color.LIGHT_GRAY);
+            setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.BLACK), "Filter Panel"));
+            setLayout(new FlowLayout());
+
+            rowSorter = new TableRowSorter<>(tableModel);
+            rowSorter.setSortsOnUpdates(true);
+
+            label = new JLabel("Enter Query: ");
+            label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+            add(label);
+
+            filterField = new JTextField(50);
+            filterField.setForeground(Color.GRAY);
+            filterField.setFont(new Font("Times New Roman", Font.ITALIC, 13));
+
+            filterField.getDocument().addDocumentListener(new DocumentListener() {
+
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    String data = filterField.getText().trim();
+                    if (data.isEmpty()) {
+                        rowSorter.setRowFilter(null);
+                    } else {
+                        try {
+                            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
+                        } catch (PatternSyntaxException e) {
+                            System.err.println(e.getMessage());
+                        }
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    String data = filterField.getText().trim();
+                    if (data.isEmpty()) {
+                        rowSorter.setRowFilter(null);
+                    } else {
+                        try {
+                            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
+
+                        } catch (PatternSyntaxException e) {
+                            System.err.println(e.getMessage());
+                        }
+                    }
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    throw new UnsupportedOperationException("Not supported yet.");
+                }
+            });
+
+            add(filterField);
+        }
+
+        public TableRowSorter<TableModel> getRowSorter() {
+            return rowSorter;
+        }
     }
 }

@@ -255,8 +255,8 @@ public class MainPanel extends JPanel {
     final class StatusBar extends JPanel {
 
         public StatusBar() {
-            setPreferredSize(new Dimension(getWidth(), 40));
-            setBackground(Color.LIGHT_GRAY);
+            setPreferredSize(new Dimension(getWidth(), 30));
+            setBackground(Color.DARK_GRAY);
         }
     }
 }
