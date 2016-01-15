@@ -220,6 +220,8 @@ public final class SQLiteDataBrowser extends JPanel {
 
         private JTextField filterField;
 
+        private JCheckBox regexEnabled;
+
         public DBTableFilterPanel() {
             initComponents();
         }
@@ -237,6 +239,10 @@ public final class SQLiteDataBrowser extends JPanel {
             label.setFont(new Font("Times New Roman", Font.PLAIN, 14));
             add(label);
 
+            regexEnabled = new JCheckBox("Use Regex");
+            regexEnabled.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+            regexEnabled.setBorderPaintedFlat(true);
+
             filterField = new JTextField(50);
             filterField.setForeground(Color.GRAY);
             filterField.setFont(new Font("Times New Roman", Font.ITALIC, 13));
@@ -250,7 +256,11 @@ public final class SQLiteDataBrowser extends JPanel {
                         rowSorter.setRowFilter(null);
                     } else {
                         try {
-                            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
+                            if (regexEnabled.isSelected()) {
+                                rowSorter.setRowFilter(RowFilter.regexFilter(data));
+                            } else {
+                                rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
+                            }
                         } catch (PatternSyntaxException e) {
                             System.err.println(e.getMessage());
                         }
@@ -264,8 +274,11 @@ public final class SQLiteDataBrowser extends JPanel {
                         rowSorter.setRowFilter(null);
                     } else {
                         try {
-                            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
-
+                            if (regexEnabled.isSelected()) {
+                                rowSorter.setRowFilter(RowFilter.regexFilter(data));
+                            } else {
+                                rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + data));
+                            }
                         } catch (PatternSyntaxException e) {
                             System.err.println(e.getMessage());
                         }
@@ -279,6 +292,7 @@ public final class SQLiteDataBrowser extends JPanel {
             });
 
             add(filterField);
+            add(regexEnabled);
         }
 
         public TableRowSorter<TableModel> getRowSorter() {
