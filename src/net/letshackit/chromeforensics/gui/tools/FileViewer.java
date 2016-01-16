@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public final class FileViewer extends JPanel {
@@ -48,6 +48,7 @@ public final class FileViewer extends JPanel {
 
         textArea = new JTextArea(10, 20);
         textArea.setLineWrap(false);
+        textArea.setEditable(false);
 
         scrollPane = new JScrollPane(textArea);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -58,16 +59,28 @@ public final class FileViewer extends JPanel {
 
         browseDb = new JButton("Browse");
         browseDb.addActionListener(actionEvent -> {
+
             int retVal = fc.showOpenDialog(this);
             if (retVal == JFileChooser.APPROVE_OPTION) {
+
                 File fileLoc = fc.getSelectedFile();
                 loadedFileLoc.setText(fileLoc.toString());
                 lastFolderLocation = fc.getCurrentDirectory();
-                try (BufferedReader reader = new BufferedReader(new FileReader(fileLoc))) {
-                    textArea.setText(Files.readAllLines(fileLoc.toPath()).toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                new SwingWorker<Void, Void>() {
+
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        try (BufferedReader reader = Files.newBufferedReader(fileLoc.toPath(),
+                                StandardCharsets.ISO_8859_1)) {
+                            textArea.setText("");
+                            reader.lines().map(s -> s + "\n").forEach(textArea::append);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
             }
         });
 
