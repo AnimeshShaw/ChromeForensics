@@ -3,6 +3,9 @@ package net.letshackit.chromeforensics.gui.tools;
 import net.letshackit.chromeforensics.gui.Utils;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,12 +18,15 @@ public final class FileViewer extends JPanel {
     private static FileViewer fileViewer = new FileViewer();
 
     private JPanel loadPanel;
+    private JPanel fileMetadata;
     private JLabel loadFileLabel;
     private JTextField loadedFileLoc;
     private JTextArea textArea;
     private JScrollPane scrollPane;
+    private JScrollPane metadataScroller;
     private JButton browseDb;
     private JFileChooser fc;
+    private JTable metadataTable;
 
     private File lastFolderLocation;
 
@@ -34,6 +40,29 @@ public final class FileViewer extends JPanel {
 
     public void initComponents() {
         setLayout(new BorderLayout());
+
+        fileMetadata = new JPanel(new BorderLayout());
+        fileMetadata.setPreferredSize(new Dimension(300, getHeight()));
+        fileMetadata.setBackground(Color.BLACK);
+
+        DefaultTableModel tableModel = new DefaultTableModel() {
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tableModel.setColumnIdentifiers(new Object[]{"Attribute Name", "Value"});
+        metadataTable = new JTable(tableModel);
+        metadataScroller = new JScrollPane(metadataTable);
+        metadataScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        metadataScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        metadataScroller.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE),
+                "File Metadata Attributes", TitledBorder.CENTER, TitledBorder.TOP,
+                new Font("Cambria", Font.ITALIC, 14), Color.WHITE));
+
+        fileMetadata.add(metadataScroller, BorderLayout.CENTER);
+        add(fileMetadata, BorderLayout.WEST);
 
         loadPanel = new JPanel(new FlowLayout());
         loadPanel.setBackground(new Color(0xe8e8e8));
@@ -75,6 +104,7 @@ public final class FileViewer extends JPanel {
                                 StandardCharsets.ISO_8859_1)) {
                             textArea.setText("");
                             reader.lines().map(s -> s + "\n").forEach(textArea::append);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

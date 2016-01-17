@@ -21,6 +21,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DecimalFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class Utils {
 
@@ -56,6 +62,35 @@ public final class Utils {
             e.printStackTrace();
         }
         return true;
+    }
+
+    /**
+     * Method to Convert Bytes to More Readable file size attribute.
+     *
+     * @param size Size of a file in Bytes
+     * @return Size in readable Bi/KiB/Mib/Gib/ format
+     */
+    public static String readableFileSize(long size) {
+        if (size <= 0) {
+            return "0";
+        }
+
+        final String[] units = new String[]{"Bi", "KiB", "MiB", "GiB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static Map<String, String> getFileMetadata(Path fileLoc) {
+        Map<String, String> linkedHashMap = new LinkedHashMap<>();
+
+        try {
+            BasicFileAttributes fileAttributes = Files.readAttributes(fileLoc, BasicFileAttributes.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return linkedHashMap;
     }
 
 }
