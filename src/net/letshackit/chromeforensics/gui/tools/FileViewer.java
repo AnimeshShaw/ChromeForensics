@@ -42,7 +42,7 @@ public final class FileViewer extends JPanel {
         setLayout(new BorderLayout());
 
         fileMetadata = new JPanel(new BorderLayout());
-        fileMetadata.setPreferredSize(new Dimension(300, getHeight()));
+        fileMetadata.setPreferredSize(new Dimension(getWidth(), 150));
         fileMetadata.setBackground(Color.BLACK);
 
         DefaultTableModel tableModel = new DefaultTableModel() {
@@ -52,8 +52,9 @@ public final class FileViewer extends JPanel {
                 return false;
             }
         };
-        tableModel.setColumnIdentifiers(new Object[]{"Attribute Name", "Value"});
+
         metadataTable = new JTable(tableModel);
+
         metadataScroller = new JScrollPane(metadataTable);
         metadataScroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         metadataScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -62,7 +63,7 @@ public final class FileViewer extends JPanel {
                 new Font("Cambria", Font.ITALIC, 14), Color.WHITE));
 
         fileMetadata.add(metadataScroller, BorderLayout.CENTER);
-        add(fileMetadata, BorderLayout.WEST);
+        add(fileMetadata, BorderLayout.SOUTH);
 
         loadPanel = new JPanel(new FlowLayout());
         loadPanel.setBackground(new Color(0xe8e8e8));
@@ -104,7 +105,8 @@ public final class FileViewer extends JPanel {
                                 StandardCharsets.ISO_8859_1)) {
                             textArea.setText("");
                             reader.lines().map(s -> s + "\n").forEach(textArea::append);
-
+                            Object[][] dataVector = Utils.to2DObjectArray(Utils.getFileMetadata(fileLoc.toPath()));
+                            tableModel.setDataVector(dataVector, new Object[]{"Attribute Name", "Value"});
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

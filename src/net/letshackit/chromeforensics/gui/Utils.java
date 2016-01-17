@@ -23,10 +23,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 public final class Utils {
 
@@ -35,6 +40,10 @@ public final class Utils {
     };
 
     public Utils() {
+    }
+
+    public static String getOsName() {
+        return System.getProperty("os.name");
     }
 
     public static String getUserHome() {
@@ -81,16 +90,89 @@ public final class Utils {
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
+    public static String getDateTime(FileTime fileTime) {
+        String DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+        return getDateTime(fileTime, DEF_FORMAT);
+    }
+
+    public static String getDateTime(FileTime fileTime, String format) {
+        String DEF_FORMAT = null;
+
+        if (format.isEmpty()) {
+            DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+        } else {
+            DEF_FORMAT = format;
+        }
+
+        SimpleDateFormat df = new SimpleDateFormat(DEF_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df.format(fileTime.toMillis());
+    }
+
+    public static String getDateTime(long millies) {
+        String DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+        return getDateTime(millies, DEF_FORMAT);
+    }
+
+    public static String getDateTime(long millies, String format) {
+        String DEF_FORMAT = null;
+
+        if (format.isEmpty()) {
+            DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+        } else {
+            DEF_FORMAT = format;
+        }
+
+        SimpleDateFormat df = new SimpleDateFormat(DEF_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return df.format(millies);
+    }
+
     public static Map<String, String> getFileMetadata(Path fileLoc) {
         Map<String, String> linkedHashMap = new LinkedHashMap<>();
 
         try {
-            BasicFileAttributes fileAttributes = Files.readAttributes(fileLoc, BasicFileAttributes.class);
-        } catch (IOException e) {
+            DosFileAttributes dosFileAttr = Files.readAttributes(fileLoc, DosFileAttributes.class);
+
+            linkedHashMap.put("File Name", fileLoc.getFileName().toString());
+            linkedHashMap.put("File Location", fileLoc.toString());
+            linkedHashMap.put("File Size", readableFileSize(dosFileAttr.size()));
+            linkedHashMap.put("Creation Time", getDateTime(dosFileAttr.creationTime()));
+            linkedHashMap.put("Last Accessed Time", getDateTime(dosFileAttr.lastAccessTime()));
+            linkedHashMap.put("Last Modified Time", getDateTime(dosFileAttr.lastModifiedTime()));
+            linkedHashMap.put("Is Directory?", dosFileAttr.isDirectory() ? "True" : "False");
+            linkedHashMap.put("Is Regular File?", dosFileAttr.isRegularFile() ? "True" : "False");
+            linkedHashMap.put("Is Symbolic Link?", dosFileAttr.isSymbolicLink() ? "True" : "False");
+            linkedHashMap.put("Is Archive?", dosFileAttr.isArchive() ? "True" : "False");
+            linkedHashMap.put("Is Hidden File?", dosFileAttr.isHidden() ? "True" : "False");
+            linkedHashMap.put("Is ReadOnly?", dosFileAttr.isReadOnly() ? "True" : "False");
+            linkedHashMap.put("Is System File?", dosFileAttr.isSystem() ? "True" : "False");
+
+            if (getOsName().equals("Linux")) {
+                PosixFileAttributes attr = Files.readAttributes(fileLoc, PosixFileAttributes.class);
+                String posixPerm = String.format("%s %s %s%n", attr.owner().getName(), attr.group().getName(),
+                        PosixFilePermissions.toString(attr.permissions()));
+
+                linkedHashMap.put("Posix", posixPerm);
+            }
+
+        } catch (UnsupportedOperationException | IOException e) {
             e.printStackTrace();
         }
 
         return linkedHashMap;
     }
 
+    public static Object[][] to2DObjectArray(Map<String, String> map) {
+        Object[][] objects = new Object[map.size()][2];
+        Object[] keys = map.keySet().toArray();
+        Object[] values = map.values().toArray();
+
+        for (int i = 0; i < map.size(); i++) {
+            objects[i][0] = keys[i];
+            objects[i][1] = values[i];
+        }
+
+        return objects;
+    }
 }
