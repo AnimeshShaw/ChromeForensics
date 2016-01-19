@@ -21,6 +21,7 @@ import java.util.regex.PatternSyntaxException;
 
 public final class SQLiteDataBrowser extends JPanel {
 
+    private final DefaultTableModel tableModel;
     private JList showTablesList;
     private JLabel loadDbLabel;
     private JLabel loadDbRecords;
@@ -32,9 +33,6 @@ public final class SQLiteDataBrowser extends JPanel {
     private JButton browseDb;
     private JTable table;
     private JFileChooser fc;
-
-    private final DefaultTableModel tableModel;
-
     private File lastFolderLocation;
 
     public SQLiteDataBrowser() {
@@ -66,7 +64,7 @@ public final class SQLiteDataBrowser extends JPanel {
         loadDbLabel = new JLabel("Load SQLite Database: ");
         loadDbLabel.setToolTipText("Possible extensions being .sqlite|.sqlite3|.db|.db3");
 
-        loadedDbPath = new JTextField("Click browse to choose the database file.", 60);
+        loadedDbPath = new JTextField("Click browse to choose the database file.", 40);
         loadedDbPath.setForeground(Color.GRAY);
         loadedDbPath.setFont(new Font("Times New Roman", Font.ITALIC, 13));
         loadedDbPath.setEditable(false);
@@ -227,7 +225,7 @@ public final class SQLiteDataBrowser extends JPanel {
         }
 
         public void initComponents() {
-            setPreferredSize(new Dimension(getWidth(), 80));
+            setPreferredSize(new Dimension(getWidth(), 60));
             setBackground(Color.LIGHT_GRAY);
             setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.BLACK), "Filter Panel"));
             setLayout(new FlowLayout());

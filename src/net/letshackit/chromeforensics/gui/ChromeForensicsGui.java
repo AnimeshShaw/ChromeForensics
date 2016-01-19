@@ -28,8 +28,8 @@ public class ChromeForensicsGui extends JFrame {
 
     private ChromeForensicsGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        WIDTH = screenSize.width;
-        HEIGHT = screenSize.height - 40;
+        WIDTH = screenSize.width - 100;
+        HEIGHT = screenSize.height - 100;
 
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
