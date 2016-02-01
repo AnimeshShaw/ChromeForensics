@@ -97,7 +97,7 @@ public final class SQLiteDataBrowser extends JPanel {
                                 }
                                 showTablesList.setEnabled(true);
                             } catch (SQLException e) {
-                                e.printStackTrace();
+                                System.err.println(e.getMessage());
                             }
                             return null;
                         }
@@ -152,7 +152,7 @@ public final class SQLiteDataBrowser extends JPanel {
                                 }
                                 tableModel.setDataVector(tableData, columnNames);
                             } catch (SQLException e) {
-                                e.printStackTrace();
+                                System.err.println(e.getMessage());
                             }
 
                             loadDbRecordsCount.setText(tableModel.getRowCount() + " x "

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.letshackit.chromeforensics.gui;
 
 import javax.swing.*;
@@ -21,7 +20,7 @@ import java.awt.*;
 
 public class ChromeForensicsGui extends JFrame {
 
-    private static ChromeForensicsGui cfGui = new ChromeForensicsGui();
+    private static final ChromeForensicsGui cfGui = new ChromeForensicsGui();
 
     private final int WIDTH;
     private final int HEIGHT;
@@ -38,8 +37,8 @@ public class ChromeForensicsGui extends JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException
-                | IllegalAccessException e) {
+            UIManager.setLookAndFeel("com.jtattoo.plaf.graphite.GraphiteLookAndFeel");
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
