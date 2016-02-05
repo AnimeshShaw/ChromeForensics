@@ -1,6 +1,6 @@
 package net.letshackit.chromeforensics.gui.tools;
 
-import net.letshackit.chromeforensics.core.SQLiteDbManager;
+import net.letshackit.chromeforensics.core.db.SQLiteDbManager;
 import net.letshackit.chromeforensics.gui.Utils;
 
 import javax.swing.*;
