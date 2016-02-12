@@ -1,5 +1,4 @@
 group 'net.letshackit'
-version '1.0-alpha'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -24,7 +23,7 @@ jar {
 
 task fatJar(type: Jar) {
     manifest.from jar.manifest
-    classifier = '1.0-Alpha-FAT'
+    classifier = '1.0-alpha-fat'
     from {
         configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
     } 
