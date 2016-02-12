@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Psycho_Coder <Animesh Shaw>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.letshackit.chromeforensics.gui.tools;
 
 import java.awt.BorderLayout;
@@ -6,16 +21,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import net.letshackit.chromeforensics.core.db.SQLiteDbManager;
-import net.letshackit.chromeforensics.core.Utils;
-
-import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -38,6 +43,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
+import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import net.letshackit.chromeforensics.core.Utils;
+import net.letshackit.chromeforensics.core.db.DBConnectionPool;
+import net.letshackit.chromeforensics.core.db.SQLiteDbModel;
 
 public final class SQLiteDataBrowser extends JPanel {
 
@@ -55,9 +69,10 @@ public final class SQLiteDataBrowser extends JPanel {
     private JFileChooser fc;
     private File lastFolderLocation;
 
-    public SQLiteDataBrowser() {
-        SQLiteDbManager dbManager = new SQLiteDbManager();
+    private SQLiteDbModel dbModel;
 
+    public SQLiteDataBrowser() {
+        DBConnectionPool dbConnPool = DBConnectionPool.getInstance();
         setLayout(new BorderLayout());
 
         showTablesList = new JList();
@@ -97,6 +112,16 @@ public final class SQLiteDataBrowser extends JPanel {
             int retVal = fc.showOpenDialog(SQLiteDataBrowser.this);
             if (retVal == JFileChooser.APPROVE_OPTION) {
                 File dbPath = fc.getSelectedFile();
+
+                if (!dbConnPool.isConnectionOpened(dbPath)) {
+                    dbModel = new SQLiteDbModel();
+                    dbConnPool.add(dbPath, dbModel);
+                    dbModel.setDbPath(dbPath.toString());
+                    dbModel.initialize();
+                } else {                    
+                    dbModel = dbConnPool.getConnection(dbPath);
+                }
+
                 if (Utils.checkIfSQLiteDb(dbPath)) {
                     loadedDbPath.setText(dbPath.toString());
                     lastFolderLocation = fc.getCurrentDirectory();
@@ -105,20 +130,19 @@ public final class SQLiteDataBrowser extends JPanel {
                         @Override
                         protected Void doInBackground() throws Exception {
                             try {
-                                dbManager.setDbPath(dbPath.toString());
-                                dbManager.initialize();
-                                Vector<String> tableList = dbManager.getTables();
+                                Vector<String> tableList = dbModel.getTables();
                                 if (tableList != null) {
                                     showTablesList.setListData(tableList);
                                 } else {
                                     JOptionPane.showMessageDialog(SQLiteDataBrowser.this,
                                             "No tables are present in the selected database",
-                                            "No Records fetched", JOptionPane.ERROR_MESSAGE);
+                                            "No Records fetched", JOptionPane.WARNING_MESSAGE);
                                 }
                                 showTablesList.setEnabled(true);
                             } catch (SQLException e) {
                                 System.err.println(e.getMessage());
                             }
+
                             return null;
                         }
                     }.execute();
@@ -159,16 +183,19 @@ public final class SQLiteDataBrowser extends JPanel {
                         @Override
                         protected Void doInBackground() throws Exception {
                             try {
-                                ResultSet rs = dbManager.executeQuery("SELECT * from " + tableName);
-                                Vector<String> columnNames = dbManager.getColumnNames(rs);
-                                Vector<Vector<Object>> tableData = new Vector<>();
-                                while (rs.next()) {
-                                    Vector<Object> vector = new Vector<>();
+                                Vector<String> columnNames;
+                                Vector<Vector<Object>> tableData;
+                                try (ResultSet rs = dbModel.executeQuery("SELECT * from " + tableName)) {
+                                    columnNames = dbModel.getColumnNames(rs);
+                                    tableData = new Vector<>();
+                                    while (rs.next()) {
+                                        Vector<Object> vector = new Vector<>();
 
-                                    for (int i = 1; i <= columnNames.size(); i++) {
-                                        vector.add(rs.getObject(i));
+                                        for (int i = 1; i <= columnNames.size(); i++) {
+                                            vector.add(rs.getObject(i));
+                                        }
+                                        tableData.add(vector);
                                     }
-                                    tableData.add(vector);
                                 }
                                 tableModel.setDataVector(tableData, columnNames);
                             } catch (SQLException e) {

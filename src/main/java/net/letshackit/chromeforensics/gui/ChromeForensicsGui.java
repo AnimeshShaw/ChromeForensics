@@ -15,14 +15,17 @@
  */
 package net.letshackit.chromeforensics.gui;
 
-import net.letshackit.chromeforensics.core.Utils;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import net.letshackit.chromeforensics.core.Utils;
 
 public class ChromeForensicsGui extends JFrame {
 
@@ -57,6 +60,17 @@ public class ChromeForensicsGui extends JFrame {
         setContentPane(mainPanel);
         setJMenuBar(new MainMenuBar());
         setIconImage(Utils.createImageIcon("images/chrome_forensics.png", "Chrome Forensics").getImage());
+        addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirmed = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit the program?",
+                        "Exit ChromeForensics ?", JOptionPane.YES_NO_OPTION);
+                if (confirmed == JOptionPane.YES_OPTION) {                    
+                    dispose();
+                }
+            }
+        });
         pack();
     }
 
