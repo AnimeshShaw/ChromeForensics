@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.letshackit.chromeforensics.core;
 
 public enum OSType {
+
     WINDOWS_81,
     WINDOWS_8,
     WINDOWS_7,

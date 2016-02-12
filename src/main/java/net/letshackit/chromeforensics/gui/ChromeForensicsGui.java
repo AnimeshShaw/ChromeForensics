@@ -15,8 +15,14 @@
  */
 package net.letshackit.chromeforensics.gui;
 
-import javax.swing.*;
-import java.awt.*;
+import net.letshackit.chromeforensics.core.Utils;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class ChromeForensicsGui extends JFrame {
 

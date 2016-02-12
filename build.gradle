@@ -1,5 +1,5 @@
 group 'net.letshackit'
-version '1.0-SNAPSHOT'
+version '1.0-alpha'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -16,10 +16,23 @@ task wrapper(type: Wrapper) {
 
 jar {
     baseName = 'ChromeForensics'
-    version = '1.0-SNAPSHOT'
+    version = '1.0-alpha'
     manifest {
         attributes 'Main-Class': 'net.letshackit.chromeforensics.gui.ChromeForensicsGui'
     }
+}
+
+task fatJar(type: Jar) {
+    manifest.from jar.manifest
+    classifier = '1.0-Alpha-FAT'
+    from {
+        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+    } 
+    with jar
+}
+
+artifacts {
+    archives fatJar
 }
 
 repositories {

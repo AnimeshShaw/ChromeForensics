@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.letshackit.chromeforensics.gui;
 
-import javax.swing.*;
+import net.letshackit.chromeforensics.core.Utils;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 
 public class MainMenuBar extends JMenuBar {
 

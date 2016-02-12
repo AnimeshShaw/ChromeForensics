@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.letshackit.chromeforensics.gui;
 
+import net.letshackit.chromeforensics.core.Utils;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import net.letshackit.chromeforensics.core.ChromeForensics;
 import net.letshackit.chromeforensics.gui.tools.FileViewer;
 import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 public class MainPanel extends JPanel {
 
@@ -63,7 +70,8 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Single instance of this MainPanel. The MainPanel uses the Singleton pattern.
+     * Single instance of this MainPanel. The MainPanel uses the Singleton
+     * pattern.
      *
      * @return returns a singleton instance of this Component
      */
@@ -204,7 +212,7 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     *  Get the Height of the MainPanel.
+     * Get the Height of the MainPanel.
      *
      * @return returns the height of the Component.
      */

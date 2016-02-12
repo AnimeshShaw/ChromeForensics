@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.letshackit.chromeforensics.core;
 
 import java.nio.file.Files;
@@ -70,6 +69,7 @@ public final class ChromeForensics {
 
     /**
      * Returns default User Home depending on OS.
+     *
      * @return returns User Home default to Operating System.
      */
     public String getUserHome() {
@@ -77,12 +77,13 @@ public final class ChromeForensics {
     }
 
     /**
-     * Returns the type of OS. Its type is {@code net.letshackit.chromeforensics.core.OSType}
+     * Returns the type of OS. Its type is
+     * {@code net.letshackit.chromeforensics.core.OSType}
      *
      * @see net.letshackit.chromeforensics.core.OSType
      * @return Type of OS.
      */
-    public OSType getOSType(){
+    public OSType getOSType() {
         switch (OS) {
             case "Windows 8.1":
                 return OSType.WINDOWS_81;
@@ -103,11 +104,12 @@ public final class ChromeForensics {
 
     /**
      * Needs update
+     *
      * @return
      */
     public Path getChromeDataPath() {
         Path path;
-        switch (getOSType()){
+        switch (getOSType()) {
             case WINDOWS_81:
             case WINDOWS_8:
             case WINDOWS_7:

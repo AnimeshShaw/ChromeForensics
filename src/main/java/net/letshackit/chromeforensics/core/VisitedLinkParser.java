@@ -15,31 +15,53 @@
  */
 package net.letshackit.chromeforensics.core;
 
-import java.util.HashMap;
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.LinkedList;
 
 /**
+ * Class that parses the
+ * <pre>Visited Links</pre> file and gathers the information contained
  *
  * @author Psycho_Coder
  */
-public abstract class VisitedLinkParser implements IParser {
+public class VisitedLinkParser {
 
-    private HashMap<String, String> visitedUrls;
+    private final LinkedList<String> visitedUrls;
+    private File vLnkFile;
 
     public VisitedLinkParser() {
-        visitedUrls = new HashMap<>();
+        visitedUrls = new LinkedList<>();
     }
 
-    @Override
-    public void parse(String file, String... strings) {
-        
+    public VisitedLinkParser(File vLnkFile) {
+        this.vLnkFile = vLnkFile;
+        visitedUrls = new LinkedList<>();
     }
 
-    public boolean isVisited() {
+    public void parse() {
+
+    }
+
+    public void parse(File file) {
+
+    }
+
+    public void parse(Path path) {
+        parse(path.toFile());
+    }
+
+    public void parse(String file) {
+        parse(new File(file));
+    }
+
+    public boolean isVisited(String url) {
+        return visitedUrls.contains(url);
+    }
+
+    public boolean isVisited(URL url) {
         return false;
-    }
-
-    public String[] getVisitedUrls() {
-        return (String[]) visitedUrls.values().toArray();
     }
 
 }
