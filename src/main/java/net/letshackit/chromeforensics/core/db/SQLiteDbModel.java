@@ -25,18 +25,18 @@ import java.util.Vector;
 /**
  * @author Psycho_Coder
  */
-public class SQLiteDbManager extends BaseDbModel {
+public class SQLiteDbModel extends BaseDbModel {
 
-    private String sDriver;
+    private final String sDriver;
     private String sConnUrl;
 
     private String dbPath;
 
-    public SQLiteDbManager() {
+    public SQLiteDbModel() {
         sDriver = "org.sqlite.JDBC";
     }
 
-    public SQLiteDbManager(String dbPath) throws FileNotFoundException {
+    public SQLiteDbModel(String dbPath) throws FileNotFoundException {
         this.dbPath = dbPath;
         sDriver = "org.sqlite.JDBC";
         sConnUrl = "jdbc:sqlite:" + dbPath;
@@ -69,12 +69,11 @@ public class SQLiteDbManager extends BaseDbModel {
         Vector<String> tableList = new Vector<>();
 
         DatabaseMetaData dbmd = this.getConnection().getMetaData();
-        ResultSet tables = dbmd.getTables(null, null, null, TABLE_TYPES);
-
-        while (tables.next()) {
-            tableList.add(tables.getString(TABLE_NAME));
+        try (ResultSet tables = dbmd.getTables(null, null, null, TABLE_TYPES)) {
+            while (tables.next()) {
+                tableList.add(tables.getString(TABLE_NAME));
+            }
         }
-
         return tableList;
     }
 
@@ -85,6 +84,7 @@ public class SQLiteDbManager extends BaseDbModel {
         for (int i = 1; i <= colCount; i++) {
             colNames.add(rsmd.getColumnName(i));
         }
+
         return colNames;
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015 Psycho_Coder <Animesh Shaw>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package net.letshackit.chromeforensics.core.db;
 
 import java.sql.Connection;
@@ -44,7 +59,7 @@ abstract class BaseDbModel {
      * @param driver
      * @param connUrl
      */
-    public void initialize(String driver, String connUrl) {
+    public final void initialize(String driver, String connUrl) {
         setDriver(driver);
         setConnectionUrl(connUrl);
         try {
@@ -60,7 +75,7 @@ abstract class BaseDbModel {
      * @param connUrl
      * @param connTimeout
      */
-    public void initialize(String driver, String connUrl, int connTimeout) {
+    public final void initialize(String driver, String connUrl, int connTimeout) {
         setDriver(driver);
         setConnectionUrl(connUrl);
         setConnectionTimeout(connTimeout);
