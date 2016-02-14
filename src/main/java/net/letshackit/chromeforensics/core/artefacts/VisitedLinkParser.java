@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Psycho_Coder <Animesh Shaw>.
+ * Copyright (C) 2016 Psycho_Coder <Animesh Shaw>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,14 @@
 package net.letshackit.chromeforensics.core.artefacts;
 
 import java.io.File;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.LinkedList;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashSet;
+import net.letshackit.chromeforensics.core.Utils;
 
 /**
  * Class that parses the
@@ -28,40 +33,72 @@ import java.util.LinkedList;
  */
 public class VisitedLinkParser {
 
-    private final LinkedList<String> visitedUrls;
-    private File vLnkFile;
+    private final File vLnkFile;
 
-    public VisitedLinkParser() {
-        visitedUrls = new LinkedList<>();
-    }
+    private final HashSet<String> fingerprints;
+    private final byte[] VLNK_MAGIC_HEADER = "VLnk".getBytes();
+    private byte[] salt;
+
+    private final int HEADER_SALT_OFFSET = 0x10;
+    private final int HEADER_SALT_LENGTH = 8;
+    private final int URL_FINGERPRINT_LENGTH = 8;
 
     public VisitedLinkParser(File vLnkFile) {
         this.vLnkFile = vLnkFile;
-        visitedUrls = new LinkedList<>();
+        salt = null;
+        fingerprints = new HashSet<>();
     }
 
-    public void parse() {
-
+    public int parse() {
+        if (Utils.verifyFileHeader(vLnkFile, VLNK_MAGIC_HEADER)) {
+            salt = new byte[HEADER_SALT_LENGTH];
+            byte[] bytes = new byte[URL_FINGERPRINT_LENGTH];
+            try (RandomAccessFile raf = new RandomAccessFile(vLnkFile, "r")) {
+                int val;
+                raf.seek(HEADER_SALT_OFFSET);
+                raf.read(salt);
+                while ((val = raf.read()) != -1) {
+                    if (val != 0) {
+                        raf.seek(raf.getFilePointer() - 1);
+                        raf.read(bytes, 0, URL_FINGERPRINT_LENGTH);
+                        fingerprints.add(Utils.byteArrayToHex(bytes));
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                System.err.println(ex.getMessage());
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+        } else {
+            return -1;
+        }
+        return 1;
     }
 
-    public void parse(File file) {
+    public String getUrlFingerprint(byte[] salt, byte[] data) {
+        byte[] mdBytes = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(salt);
+            md.update(data);
+            mdBytes = md.digest();
+        } catch (NoSuchAlgorithmException ex) {
+            System.err.println("Couldn't determine the hashing algorithm." + ex.
+                    getMessage());
+        }
 
-    }
-
-    public void parse(Path path) {
-        parse(path.toFile());
-    }
-
-    public void parse(String file) {
-        parse(new File(file));
+        return Utils.byteArrayToHex(Arrays.copyOf(mdBytes, URL_FINGERPRINT_LENGTH));
     }
 
     public boolean isVisited(String url) {
-        return visitedUrls.contains(url);
+        return fingerprints.contains(getUrlFingerprint(salt, url.getBytes()));
     }
 
-    public boolean isVisited(URL url) {
-        return false;
+    public byte[] getSalt() {
+        return salt;
     }
 
+    public HashSet<String> getVisitedFingerprints() {
+        return fingerprints;
+    }
 }
