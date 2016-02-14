@@ -17,6 +17,7 @@ package net.letshackit.chromeforensics.core;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -59,17 +61,52 @@ public final class Utils {
         }
     }
 
-    public static boolean checkIfSQLiteDb(File dbPath) {
-        try (FileInputStream fis = new FileInputStream(dbPath)) {
-            for (int i : SQLITE_MAGIC_HEADER) {
+    /**
+     * Converts array of bytes to hex string.
+     *
+     * @param bytes Byte Array to be converted to Hex String.
+     * @return Returns the hex string for {@code bytes} array.
+     */
+    public static String byteArrayToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).
+                    substring(1));
+        }
+        return sb.toString();
+    }
+
+    public static boolean isSQLiteDb(File dbPath) {
+        return verifyFileHeader(dbPath, SQLITE_MAGIC_HEADER);
+    }
+
+    public static boolean verifyFileHeader(File file, int[] magicNumber) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            for (int i : magicNumber) {
                 if (fis.read() != i) {
                     return false;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
         return true;
+    }
+
+    public static boolean verifyFileHeader(File file, byte[] magicNumber) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[magicNumber.length];
+            if (fis.read(buffer) != -1) {
+                return Arrays.equals(magicNumber, buffer);
+            }
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 
     /**
@@ -155,8 +192,8 @@ public final class Utils {
                 linkedHashMap.put("Posix", posixPerm);
             }
 
-        } catch (UnsupportedOperationException | IOException e) {
-            e.printStackTrace();
+        } catch (UnsupportedOperationException | IOException ex) {
+            System.err.println(ex.getMessage());
         }
 
         return linkedHashMap;
