@@ -1,4 +1,5 @@
 /*
+ * ChromeForensics v1.0
  * Copyright (C) 2016 Psycho_Coder <Animesh Shaw>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,6 +50,13 @@ public class VisitedLinkParser {
         fingerprints = new HashSet<>();
     }
 
+    /**
+     * Parses the
+     * <pre>Visited Links</pre> file, retrieves the salt used to hash the urls
+     * and stores the fingerprints in a HashSet
+     *
+     * @return Returns 1 if parsing was successful else returns -1
+     */
     public int parse() {
         if (Utils.verifyFileHeader(vLnkFile, VLNK_MAGIC_HEADER)) {
             salt = new byte[HEADER_SALT_LENGTH];
@@ -75,8 +83,17 @@ public class VisitedLinkParser {
         return 1;
     }
 
+    /**
+     * Calculates the URL fingerprint for any custom url.
+     *
+     * @param salt Salt used during hashing.
+     * @param data array of bytes for the URL whose fingerprint will be
+     * calculated.
+     * @return Returns the first 8 bytes of the digest after hex encoding them.
+     */
     public String getUrlFingerprint(byte[] salt, byte[] data) {
         byte[] mdBytes = null;
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(salt);
