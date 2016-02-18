@@ -15,15 +15,10 @@
  */
 package net.letshackit.chromeforensics.gui;
 
-import net.letshackit.chromeforensics.core.Utils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import net.letshackit.chromeforensics.core.ChromeForensics;
-import net.letshackit.chromeforensics.gui.tools.FileViewer;
-import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
-
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
@@ -32,16 +27,20 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import net.letshackit.chromeforensics.core.ChromeForensics;
+import net.letshackit.chromeforensics.core.Utils;
+import net.letshackit.chromeforensics.gui.tools.FileViewer;
+import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
 
 public class MainPanel extends JPanel {
 
-    private static MainPanel mainPanel = new MainPanel();
+    private static final MainPanel mainPanel = new MainPanel();
     protected JToolBar toolBar;
     protected JButton autoLoadData;
     protected JButton manuallyLoadData;
     protected JButton exitButton;
-    protected JButton exportCsv;
-    protected JButton exportHtml;
+    protected JButton exportTSV;
+    protected JButton exportHTML;
     protected JButton helpButton;
     protected JButton aboutButton;
     protected JPanel visits;
@@ -57,9 +56,12 @@ public class MainPanel extends JPanel {
     protected JPanel customQuery;
     protected JTable visitsTable;
     protected JTabbedPane tabbedPane;
+    
     protected ChromeForensics cf;
+    
     private int WIDTH = 1000;
     private int HEIGHT = 600;
+    
     private Map<Integer, JPanel> tabbedPanelDetails;
 
     /**
@@ -122,17 +124,17 @@ public class MainPanel extends JPanel {
 
         toolBar.add(new JToolBar.Separator());
 
-        exportCsv = new JButton("Export to");
-        exportCsv.setIcon(Utils.createImageIcon("images/csv.png", "Export results to CSV"));
-        exportCsv.setToolTipText("Export Results to CSV");
-        exportCsv.setHorizontalTextPosition(SwingConstants.LEFT);
-        toolBar.add(exportCsv);
+        exportTSV = new JButton("Export to");
+        exportTSV.setIcon(Utils.createImageIcon("images/csv.png", "Export results to CSV"));
+        exportTSV.setToolTipText("Export Results to CSV");
+        exportTSV.setHorizontalTextPosition(SwingConstants.LEFT);
+        toolBar.add(exportTSV);
 
-        exportHtml = new JButton("Export to");
-        exportHtml.setIcon(Utils.createImageIcon("images/html.png", "Export results to HTML"));
-        exportHtml.setToolTipText("Export results to HTML.");
-        exportHtml.setHorizontalTextPosition(SwingConstants.LEFT);
-        toolBar.add(exportHtml);
+        exportHTML = new JButton("Export to");
+        exportHTML.setIcon(Utils.createImageIcon("images/html.png", "Export results to HTML"));
+        exportHTML.setToolTipText("Export results to HTML.");
+        exportHTML.setHorizontalTextPosition(SwingConstants.LEFT);
+        toolBar.add(exportHTML);
 
         toolBar.add(new JToolBar.Separator());
 

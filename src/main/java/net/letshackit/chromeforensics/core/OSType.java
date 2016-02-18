@@ -16,12 +16,16 @@
 package net.letshackit.chromeforensics.core;
 
 public enum OSType {
-
+    WINDOWS_SERVER3,
+    WINDOWS_SERVER8,
+    WINDOWS_SERVER12,
+    WINDOWS_10,
     WINDOWS_81,
     WINDOWS_8,
     WINDOWS_7,
     WINDOWS_VISTA,
     WINDOWS_XP,
     LINUX,
+    ANDROID,
     NOT_SUPPORTED,
 }

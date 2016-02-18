@@ -2,7 +2,7 @@
 <Configuration status="DEBUG">
     <Appenders>
         <RollingFile fileName="chrome-forensics-exec.log"
-                     filePattern="phasher-exec-%d{yyyy-MM-dd}-%i.log" name="RollingFile">
+                     filePattern="chrome-forensics-exec-%d{yyyy-MM-dd}-%i.log" name="RollingFile">
             <PatternLayout>
                 <pattern>%d{dd/MMM/yyyy HH:mm:ss,SSS}- %c{1}: %m%n</pattern>
             </PatternLayout>

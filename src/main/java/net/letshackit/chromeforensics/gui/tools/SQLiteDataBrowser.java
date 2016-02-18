@@ -122,7 +122,7 @@ public final class SQLiteDataBrowser extends JPanel {
                     dbModel = dbConnPool.getConnection(dbPath);
                 }
 
-                if (Utils.checkIfSQLiteDb(dbPath)) {
+                if (Utils.isSQLiteDb(dbPath)) {
                     loadedDbPath.setText(dbPath.toString());
                     lastFolderLocation = fc.getCurrentDirectory();
                     new SwingWorker<Void, Void>() {

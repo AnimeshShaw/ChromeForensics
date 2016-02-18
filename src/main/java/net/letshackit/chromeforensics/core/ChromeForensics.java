@@ -18,6 +18,8 @@ package net.letshackit.chromeforensics.core;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class ChromeForensics {
 
@@ -29,6 +31,7 @@ public final class ChromeForensics {
     private final String WINDOWS_VISTAUP_CHROME_DATAPATH;
     private final String WINDOWS_XP_CHROME_DATAPATH;
     private final String LINUX_CHROMIUM_DATAPATH;
+    private final String LINUX_CHROME_DATAPATH;
 
     /**
      * Paths to Forensically important SQLite DB files or other files.
@@ -44,13 +47,17 @@ public final class ChromeForensics {
     private final String BOOKMARKSBAK_PATH;
     private final String PREFERENCES_PATH;
     private final String SECPREFERENCES_PATH;
+    private final String VISITED_LINKS_PATH;
 
+    final static Logger logger = LogManager.getLogger(ChromeForensics.class);
+    
     public ChromeForensics() {
         USER_HOME = System.getProperty("user.home");
         OS = System.getProperty("os.name");
         WINDOWS_VISTAUP_CHROME_DATAPATH = "AppData/Local/Google/Chrome/User Data/Default";
         WINDOWS_XP_CHROME_DATAPATH = "/Local Settings/Application Data/Google/Chrome/User Data/Default";
         LINUX_CHROMIUM_DATAPATH = ".config/chromium/Default";
+        LINUX_CHROME_DATAPATH = ".config/google-chrome/Default";
 
         assert getChromeDataPath() != null;
 
@@ -65,6 +72,7 @@ public final class ChromeForensics {
         BOOKMARKSBAK_PATH = Paths.get(getChromeDataPath().toString(), "Bookmarks.bak").toString();
         PREFERENCES_PATH = Paths.get(getChromeDataPath().toString(), "Preferences").toString();
         SECPREFERENCES_PATH = Paths.get(getChromeDataPath().toString(), "Secure Preferences").toString();
+        VISITED_LINKS_PATH = Paths.get(getChromeDataPath().toString(), "Visited Links").toString();
     }
 
     /**
@@ -85,6 +93,8 @@ public final class ChromeForensics {
      */
     public OSType getOSType() {
         switch (OS) {
+            case "Windows 10":
+                return OSType.WINDOWS_10;
             case "Windows 8.1":
                 return OSType.WINDOWS_81;
             case "Windows 8":
@@ -110,6 +120,7 @@ public final class ChromeForensics {
     public Path getChromeDataPath() {
         Path path;
         switch (getOSType()) {
+            case WINDOWS_10:
             case WINDOWS_81:
             case WINDOWS_8:
             case WINDOWS_7:
@@ -122,6 +133,10 @@ public final class ChromeForensics {
                 assert Files.exists(path) && Files.isDirectory(path);
                 return path;
             case LINUX:
+                if (isChromeInstalled(OSType.LINUX)) {
+                    path = Paths.get(USER_HOME, LINUX_CHROME_DATAPATH);
+                    return path;
+                }
                 path = Paths.get(USER_HOME, LINUX_CHROMIUM_DATAPATH);
                 assert Files.exists(path) && Files.isDirectory(path);
                 return path;
@@ -131,6 +146,22 @@ public final class ChromeForensics {
         return null;
     }
 
+    /**
+     *
+     * @param os
+     * @return
+     */
+    public boolean isChromeInstalled(OSType os) {
+        if (os == OSType.LINUX) {
+            return Files.exists(Paths.get(USER_HOME, LINUX_CHROME_DATAPATH));
+        }
+        return false;
+    }
+
+    /**
+     *
+     * @return
+     */
     public String getHistoryDbPath() {
         return HISTORY_PATH;
     }
