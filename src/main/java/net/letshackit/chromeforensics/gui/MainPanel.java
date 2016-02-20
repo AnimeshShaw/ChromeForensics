@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
@@ -29,12 +31,16 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import net.letshackit.chromeforensics.core.ChromeForensics;
 import net.letshackit.chromeforensics.core.Utils;
+import net.letshackit.chromeforensics.core.export.ExportType;
 import net.letshackit.chromeforensics.gui.tools.FileViewer;
 import net.letshackit.chromeforensics.gui.tools.SQLiteDataBrowser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MainPanel extends JPanel {
 
     private static final MainPanel mainPanel = new MainPanel();
+
     protected JToolBar toolBar;
     protected JButton autoLoadData;
     protected JButton manuallyLoadData;
@@ -56,12 +62,14 @@ public class MainPanel extends JPanel {
     protected JPanel customQuery;
     protected JTable visitsTable;
     protected JTabbedPane tabbedPane;
-    
+
+    final static Logger logger = LogManager.getLogger(MainPanel.class);
+
     protected ChromeForensics cf;
-    
+
     private int WIDTH = 1000;
     private int HEIGHT = 600;
-    
+
     private Map<Integer, JPanel> tabbedPanelDetails;
 
     /**
@@ -128,6 +136,13 @@ public class MainPanel extends JPanel {
         exportTSV.setIcon(Utils.createImageIcon("images/csv.png", "Export results to CSV"));
         exportTSV.setToolTipText("Export Results to CSV");
         exportTSV.setHorizontalTextPosition(SwingConstants.LEFT);
+        exportTSV.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                ExportDialog export = new ExportDialog(ExportType.TSV);
+                export.setVisible(true);
+            }
+        });
         toolBar.add(exportTSV);
 
         exportHTML = new JButton("Export to");
@@ -153,7 +168,12 @@ public class MainPanel extends JPanel {
         exitButton = new JButton();
         exitButton.setIcon(Utils.createImageIcon("images/exit.png", "Exit Application."));
         exitButton.setToolTipText("Exit Application");
-        exitButton.addActionListener(actionEvent -> ChromeForensicsGui.getInstance().dispose());
+        exitButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                ChromeForensicsGui.getInstance().dispose();
+            }
+        });
         toolBar.add(exitButton);
     }
 
@@ -209,6 +229,7 @@ public class MainPanel extends JPanel {
      *
      * @return returns the height of the Component.
      */
+    @Override
     public final int getWidth() {
         return WIDTH;
     }
@@ -218,6 +239,7 @@ public class MainPanel extends JPanel {
      *
      * @return returns the height of the Component.
      */
+    @Override
     public final int getHeight() {
         return HEIGHT;
     }

@@ -15,11 +15,13 @@
  */
 package net.letshackit.chromeforensics.gui;
 
-import net.letshackit.chromeforensics.core.Utils;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
+import net.letshackit.chromeforensics.core.Utils;
 
 public class MainMenuBar extends JMenuBar {
 
@@ -140,12 +142,18 @@ public class MainMenuBar extends JMenuBar {
         helpAbout.setIcon(Utils.createImageIcon("images/about_small.png", "About this tool"));
         help.add(helpAbout);
 
-        fileExit.addActionListener(actionEvent -> {
-            ChromeForensicsGui.getInstance().dispose();
+        fileExit.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                ChromeForensicsGui.getInstance().dispose();
+            }
         });
 
-        dataBrowser.addActionListener(actionEvent -> {
-            MainPanel.getInstance().setSelectedTabIndex(6);
+        dataBrowser.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                MainPanel.getInstance().setSelectedTabIndex(6);
+            }
         });
     }
 }

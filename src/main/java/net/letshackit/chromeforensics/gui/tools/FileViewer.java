@@ -5,12 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import net.letshackit.chromeforensics.core.Utils;
-
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -26,10 +22,14 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+import net.letshackit.chromeforensics.core.Utils;
 
 public final class FileViewer extends JPanel {
 
-    private static FileViewer fileViewer = new FileViewer();
+    private static final FileViewer fileViewer = new FileViewer();
 
     private JPanel loadPanel;
     private JPanel fileMetadata;
@@ -59,7 +59,7 @@ public final class FileViewer extends JPanel {
         fileMetadata.setPreferredSize(new Dimension(getWidth(), 150));
         fileMetadata.setBackground(Color.BLACK);
 
-        DefaultTableModel tableModel = new DefaultTableModel() {
+        final DefaultTableModel tableModel = new DefaultTableModel() {
 
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -102,31 +102,39 @@ public final class FileViewer extends JPanel {
         fc = new JFileChooser(lastFolderLocation);
 
         browseDb = new JButton("Browse");
-        browseDb.addActionListener(actionEvent -> {
+        browseDb.addActionListener(new ActionListener() {
 
-            int retVal = fc.showOpenDialog(this);
-            if (retVal == JFileChooser.APPROVE_OPTION) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int retVal = fc.showOpenDialog(FileViewer.this);
+                if (retVal == JFileChooser.APPROVE_OPTION) {
 
-                File fileLoc = fc.getSelectedFile();
-                loadedFileLoc.setText(fileLoc.toString());
-                lastFolderLocation = fc.getCurrentDirectory();
+                    final File fileLoc = fc.getSelectedFile();
+                    loadedFileLoc.setText(fileLoc.toString());
+                    lastFolderLocation = fc.getCurrentDirectory();
 
-                new SwingWorker<Void, Void>() {
+                    new SwingWorker<Void, Void>() {
 
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        try (BufferedReader reader = Files.newBufferedReader(fileLoc.toPath(),
-                                StandardCharsets.ISO_8859_1)) {
-                            textArea.setText("");
-                            reader.lines().map(s -> s + "\n").forEach(textArea::append);
-                            Object[][] dataVector = Utils.to2DObjectArray(Utils.getFileMetadata(fileLoc.toPath()));
-                            tableModel.setDataVector(dataVector, new Object[]{"Attribute Name", "Value"});
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            String line;
+                            try (BufferedReader reader = Files.newBufferedReader(fileLoc.toPath(),
+                                    StandardCharsets.ISO_8859_1)) {
+                                textArea.setText("");
+                                //reader.lines().map(s -> s + "\n").forEach(textArea::append);
+                                while ((line = reader.readLine()) != null) {
+                                    textArea.append(line);
+                                    textArea.append("\n");
+                                }
+                                Object[][] dataVector = Utils.to2DObjectArray(Utils.getFileMetadata(fileLoc.toPath()));
+                                tableModel.setDataVector(dataVector, new Object[]{"Attribute Name", "Value"});
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                }.execute();
+                    }.execute();
+                }
             }
         });
 

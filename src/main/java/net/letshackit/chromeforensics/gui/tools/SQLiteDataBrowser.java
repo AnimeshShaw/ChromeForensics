@@ -21,6 +21,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -52,6 +54,8 @@ import javax.swing.table.TableRowSorter;
 import net.letshackit.chromeforensics.core.Utils;
 import net.letshackit.chromeforensics.core.db.DBConnectionPool;
 import net.letshackit.chromeforensics.core.db.SQLiteDbModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class SQLiteDataBrowser extends JPanel {
 
@@ -71,8 +75,10 @@ public final class SQLiteDataBrowser extends JPanel {
 
     private SQLiteDbModel dbModel;
 
+    final static Logger logger = LogManager.getLogger(SQLiteDataBrowser.class);
+
     public SQLiteDataBrowser() {
-        DBConnectionPool dbConnPool = DBConnectionPool.getInstance();
+        final DBConnectionPool dbConnPool = DBConnectionPool.getInstance();
         setLayout(new BorderLayout());
 
         showTablesList = new JList();
@@ -108,48 +114,52 @@ public final class SQLiteDataBrowser extends JPanel {
         fc = new JFileChooser(lastFolderLocation);
 
         browseDb = new JButton("Browse");
-        browseDb.addActionListener(actionEvent -> {
-            int retVal = fc.showOpenDialog(SQLiteDataBrowser.this);
-            if (retVal == JFileChooser.APPROVE_OPTION) {
-                File dbPath = fc.getSelectedFile();
+        browseDb.addActionListener(new ActionListener() {
 
-                if (!dbConnPool.isConnectionOpened(dbPath)) {
-                    dbModel = new SQLiteDbModel();
-                    dbConnPool.add(dbPath, dbModel);
-                    dbModel.setDbPath(dbPath.toString());
-                    dbModel.initialize();
-                } else {                    
-                    dbModel = dbConnPool.getConnection(dbPath);
-                }
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int retVal = fc.showOpenDialog(SQLiteDataBrowser.this);
+                if (retVal == JFileChooser.APPROVE_OPTION) {
+                    File dbPath = fc.getSelectedFile();
 
-                if (Utils.isSQLiteDb(dbPath)) {
-                    loadedDbPath.setText(dbPath.toString());
-                    lastFolderLocation = fc.getCurrentDirectory();
-                    new SwingWorker<Void, Void>() {
+                    if (!dbConnPool.isConnectionOpened(dbPath)) {
+                        dbModel = new SQLiteDbModel();
+                        dbConnPool.add(dbPath, dbModel);
+                        dbModel.setDbPath(dbPath.toString());
+                        dbModel.initialize();
+                    } else {
+                        dbModel = dbConnPool.getConnection(dbPath);
+                    }
 
-                        @Override
-                        protected Void doInBackground() throws Exception {
-                            try {
-                                Vector<String> tableList = dbModel.getTables();
-                                if (tableList != null) {
-                                    showTablesList.setListData(tableList);
-                                } else {
-                                    JOptionPane.showMessageDialog(SQLiteDataBrowser.this,
-                                            "No tables are present in the selected database",
-                                            "No Records fetched", JOptionPane.WARNING_MESSAGE);
+                    if (Utils.isSQLiteDb(dbPath)) {
+                        loadedDbPath.setText(dbPath.toString());
+                        lastFolderLocation = fc.getCurrentDirectory();
+                        new SwingWorker<Void, Void>() {
+
+                            @Override
+                            protected Void doInBackground() throws Exception {
+                                try {
+                                    Vector<String> tableList = dbModel.getTables();
+                                    if (tableList != null) {
+                                        showTablesList.setListData(tableList);
+                                    } else {
+                                        JOptionPane.showMessageDialog(SQLiteDataBrowser.this,
+                                                "No tables are present in the selected database",
+                                                "No Records fetched", JOptionPane.WARNING_MESSAGE);
+                                    }
+                                    showTablesList.setEnabled(true);
+                                } catch (SQLException e) {
+                                    System.err.println(e.getMessage());
                                 }
-                                showTablesList.setEnabled(true);
-                            } catch (SQLException e) {
-                                System.err.println(e.getMessage());
-                            }
 
-                            return null;
-                        }
-                    }.execute();
-                } else {
-                    JOptionPane.showMessageDialog(SQLiteDataBrowser.this, "The Selected file is not in SQLite Format",
-                            "File Format Error", JOptionPane.ERROR_MESSAGE);
-                    loadedDbPath.setText("Click browse to choose the database file.");
+                                return null;
+                            }
+                        }.execute();
+                    } else {
+                        JOptionPane.showMessageDialog(SQLiteDataBrowser.this, "The Selected file is not in SQLite Format",
+                                "File Format Error", JOptionPane.ERROR_MESSAGE);
+                        loadedDbPath.setText("Click browse to choose the database file.");
+                    }
                 }
             }
         });
@@ -176,7 +186,7 @@ public final class SQLiteDataBrowser extends JPanel {
             public void mouseClicked(MouseEvent evt) {
                 JList list = (JList) evt.getSource();
                 if (evt.getClickCount() == 2) {
-                    String tableName = list.getSelectedValue().toString();
+                    final String tableName = list.getSelectedValue().toString();
 
                     new SwingWorker<Void, Void>() {
 
@@ -231,6 +241,10 @@ public final class SQLiteDataBrowser extends JPanel {
         add(filterPanel, BorderLayout.SOUTH);
     }
 
+    public JTable getDataTable() {
+        return table;
+    }
+
     /**
      * TableModel to be used for the Browser JTable.
      */
@@ -277,7 +291,7 @@ public final class SQLiteDataBrowser extends JPanel {
             setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.BLACK), "Filter Panel"));
             setLayout(new FlowLayout());
 
-            rowSorter = new TableRowSorter<>(tableModel);
+            rowSorter = new TableRowSorter<>((TableModel) tableModel);
             rowSorter.setSortsOnUpdates(true);
 
             label = new JLabel("Enter Query: ");

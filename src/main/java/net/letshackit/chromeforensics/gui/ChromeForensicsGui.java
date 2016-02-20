@@ -26,6 +26,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import net.letshackit.chromeforensics.core.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ChromeForensicsGui extends JFrame {
 
@@ -33,6 +35,8 @@ public class ChromeForensicsGui extends JFrame {
 
     private final int WIDTH;
     private final int HEIGHT;
+
+    final static Logger logger = LogManager.getLogger(ChromeForensicsGui.class);
 
     private ChromeForensicsGui() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,7 +70,7 @@ public class ChromeForensicsGui extends JFrame {
             public void windowClosing(WindowEvent e) {
                 int confirmed = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit the program?",
                         "Exit ChromeForensics ?", JOptionPane.YES_NO_OPTION);
-                if (confirmed == JOptionPane.YES_OPTION) {                    
+                if (confirmed == JOptionPane.YES_OPTION) {
                     dispose();
                 }
             }
@@ -79,6 +83,11 @@ public class ChromeForensicsGui extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> getInstance().setVisible(true));
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                getInstance().setVisible(true);
+            }
+        });
     }
 }
