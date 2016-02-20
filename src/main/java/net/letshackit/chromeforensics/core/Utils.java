@@ -50,7 +50,14 @@ public final class Utils {
     public static String getUserHome() {
         return System.getProperty("user.home");
     }
-
+    
+    /**
+     * This method is used to create an ImageIcon class of any image resource to set it to any Swing Components.
+     * 
+     * @param path Path to image resource.
+     * @param description description for the image icon
+     * @return Returns an ImageIcon instance for the image sent.
+     */
     public static ImageIcon createImageIcon(String path, String description) {
         URL imgURL = Utils.class.getClassLoader().getResource(path);
         if (imgURL != null) {
@@ -75,7 +82,12 @@ public final class Utils {
         }
         return sb.toString();
     }
-
+    
+    /**
+     * 
+     * @param dbPath
+     * @return 
+     */
     public static boolean isSQLiteDb(File dbPath) {
         return verifyFileHeader(dbPath, SQLITE_MAGIC_HEADER);
     }
@@ -94,7 +106,13 @@ public final class Utils {
         }
         return true;
     }
-
+    
+    /**
+     * 
+     * @param file
+     * @param magicNumber
+     * @return 
+     */
     public static boolean verifyFileHeader(File file, byte[] magicNumber) {
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] buffer = new byte[magicNumber.length];
@@ -113,7 +131,7 @@ public final class Utils {
      * Method to Convert Bytes to More Readable file size attribute.
      *
      * @param size Size of a file in Bytes
-     * @return Size in readable Bi/KiB/Mib/Gib/ format
+     * @return Returns file size in Bi/KiB/Mib/Gib/ format
      */
     public static String readableFileSize(long size) {
         if (size <= 0) {
@@ -125,12 +143,23 @@ public final class Utils {
 
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
-
+    
+    /**
+     * 
+     * @param fileTime
+     * @return 
+     */
     public static String getDateTime(FileTime fileTime) {
         String DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
         return getDateTime(fileTime, DEF_FORMAT);
     }
-
+    
+    /**
+     * 
+     * @param fileTime
+     * @param format
+     * @return 
+     */
     public static String getDateTime(FileTime fileTime, String format) {
         String DEF_FORMAT = null;
 
@@ -144,12 +173,23 @@ public final class Utils {
         df.setTimeZone(TimeZone.getTimeZone("GMT"));
         return df.format(fileTime.toMillis());
     }
-
+    
+    /**
+     * 
+     * @param millies
+     * @return 
+     */
     public static String getDateTime(long millies) {
         String DEF_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
         return getDateTime(millies, DEF_FORMAT);
     }
-
+    
+    /**
+     * 
+     * @param millies
+     * @param format
+     * @return 
+     */
     public static String getDateTime(long millies, String format) {
         String DEF_FORMAT = null;
 
@@ -163,7 +203,12 @@ public final class Utils {
         df.setTimeZone(TimeZone.getTimeZone("GMT"));
         return df.format(millies);
     }
-
+    
+    /**
+     * 
+     * @param fileLoc
+     * @return 
+     */
     public static Map<String, String> getFileMetadata(Path fileLoc) {
         Map<String, String> linkedHashMap = new LinkedHashMap<>();
 
@@ -198,7 +243,12 @@ public final class Utils {
 
         return linkedHashMap;
     }
-
+    
+    /**
+     * 
+     * @param map
+     * @return 
+     */
     public static Object[][] to2DObjectArray(Map<String, String> map) {
         Object[][] objects = new Object[map.size()][2];
         Object[] keys = map.keySet().toArray();
