@@ -5,12 +5,12 @@ apply plugin: 'application'
 
 mainClassName = 'net.letshackit.chromeforensics.gui.ChromeForensicsGui'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
+    gradleVersion = '3.0'
 }
 
 jar {
