@@ -2,4 +2,4 @@
 
 A tool to perform automated forensic analysis of Chrome Browser.
 
-## Development in Progress
+## Development Stopped. New Repository will be created.
